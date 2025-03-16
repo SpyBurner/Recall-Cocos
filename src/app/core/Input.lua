@@ -5,7 +5,7 @@ Input.keys = {}  -- Store pressed keys
 -- ✅ Register key press
 local function onKeyPressed(keyCode, event)
     if DEBUG > 0 then
-        print("Key Pressed:", keyCode)  -- Debugging
+        -- print("Key Pressed:", keyCode)  -- Debugging
     end
     Input.keys[keyCode] = true
 end
@@ -13,7 +13,7 @@ end
 -- ✅ Register key release
 local function onKeyReleased(keyCode, event)
     if DEBUG > 0 then
-        print("Key Released:", keyCode)  -- Debugging
+        -- print("Key Released:", keyCode)  -- Debugging
     end
     Input.keys[keyCode] = false
 end

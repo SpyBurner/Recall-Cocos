@@ -11,6 +11,7 @@ fileUtils:addSearchPath("app/views/")       -- UI Views folder
 fileUtils:addSearchPath("app/controllers/") -- Controllers folder
 fileUtils:addSearchPath("app/objects/")     -- ✅ Objects folder (for Player, Ground, etc.)
 fileUtils:addSearchPath("app/core/")        -- ✅ Core folder (for GameObject, Input, etc.)
+fileUtils:addSearchPath("app/components/")  -- Components folder
 
 local function main()
     require("app.MyApp"):create():run()

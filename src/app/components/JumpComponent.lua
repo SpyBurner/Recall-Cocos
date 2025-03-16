@@ -4,7 +4,7 @@ local JumpComponent = class("JumpComponent", Component)
 function JumpComponent:ctor(owner)
     Component.ctor(self, owner)  -- Call base class constructor
     self.jumpStrength = 300
-    self.isOnGround = false
+    self.isOnGround = true
 end
 
 function JumpComponent:jump()

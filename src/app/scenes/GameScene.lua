@@ -7,7 +7,7 @@ end)
 
 function GameScene:ctor()
     local physicsWorld = self:getPhysicsWorld()
-    physicsWorld:setGravity(cc.p(0, -500))
+    physicsWorld:setGravity(cc.p(0, -1000))
     physicsWorld:setDebugDrawMask(cc.PhysicsWorld.DEBUGDRAW_ALL)
 
     -- ✅ Create game view (UI & ground)
