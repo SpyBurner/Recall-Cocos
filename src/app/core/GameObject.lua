@@ -1,14 +1,23 @@
 local GameObject = class("GameObject", function()
-    return cc.Node:create()  -- All game objects are nodes
+    return cc.Node:create()  -- ✅ All game objects are nodes
 end)
 
 function GameObject:ctor()
-    self:scheduleUpdateWithPriorityLua(handler(self, self.update), 0)
+    self.components = {}  -- ✅ Store all attached components
+    self:scheduleUpdateWithPriorityLua(handler(self, self.update), 0)  -- ✅ Schedule update once
 end
 
--- ✅ Override this in subclasses (like Unity's Update())
+function GameObject:addComponent(component)
+    table.insert(self.components, component)  -- ✅ Store component in a list
+end
+
+-- ✅ Update loop (called every frame)
 function GameObject:update(dt)
-    -- Default: Do nothing, should be overridden
+    for _, component in ipairs(self.components) do
+        if component.update then
+            component:update(dt)  -- ✅ Call update on all components
+        end
+    end
 end
 
 return GameObject
