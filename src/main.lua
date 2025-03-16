@@ -5,10 +5,12 @@ require "cocos.init"
 
 -- ✅ Add custom search paths
 local fileUtils = cc.FileUtils:getInstance()
-fileUtils:addSearchPath("app/")        -- Make sure "app" folder is included
-fileUtils:addSearchPath("app/scenes/") -- Add scenes folder
-fileUtils:addSearchPath("app/views/")  -- Add views folder
-fileUtils:addSearchPath("app/controllers/")  -- Add controllers folder
+fileUtils:addSearchPath("app/")             -- Main app folder
+fileUtils:addSearchPath("app/scenes/")      -- Scenes folder
+fileUtils:addSearchPath("app/views/")       -- UI Views folder
+fileUtils:addSearchPath("app/controllers/") -- Controllers folder
+fileUtils:addSearchPath("app/objects/")     -- ✅ Objects folder (for Player, Ground, etc.)
+fileUtils:addSearchPath("app/core/")        -- ✅ Core folder (for GameObject, Input, etc.)
 
 local function main()
     require("app.MyApp"):create():run()
