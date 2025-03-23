@@ -12,8 +12,22 @@ function Ground:ctor(width, height)
     physicsBody:setDynamic(false)
     
     physicsBody:setCategoryBitmask(CollisionLayers.WALL)
-    physicsBody:setContactTestBitmask(CollisionLayers.PLAYER)
-    physicsBody:setCollisionBitmask(CollisionLayers.PLAYER)
+
+    physicsBody:setCollisionBitmask(
+        CollisionLayers:collidesWith(  -- What the wall collides with
+            CollisionLayers.PLAYER, 
+            CollisionLayers.ENEMY, 
+            CollisionLayers.PROJECTILE,
+            CollisionLayers.E_PROJECTILE
+        )
+    )
+    
+    physicsBody:setContactTestBitmask(  -- ✅ Raycast uses this!
+        CollisionLayers:collidesWith(  
+            CollisionLayers.PLAYER  -- ✅ Allow player raycast detection
+        )
+    )
+    
 
     -- physicsBody:setGroup(CollisionLayers.WALL)
 

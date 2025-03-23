@@ -16,10 +16,25 @@ function ControllableObject:ctor(physicsWorld, speed, jumpStrength, isPlayer)
     self.physicsBody:setDynamic(true)
     self.physicsBody:setRotationEnable(false)
     
+
     self.physicsBody:setCategoryBitmask(CollisionLayers.PLAYER)
-    self.physicsBody:setContactTestBitmask(CollisionLayers.WALL)
-    self.physicsBody:setCollisionBitmask(CollisionLayers.WALL)
-    -- self.physicsBody:setGroup(CollisionLayers.PLAYER)
+
+    self.physicsBody:setCollisionBitmask(
+        CollisionLayers:collidesWith(  -- What the player PHYSICALLY collides with
+            CollisionLayers.WALL, 
+            CollisionLayers.SPIKE, 
+            CollisionLayers.GATE
+        )
+    )
+
+    self.physicsBody:setContactTestBitmask(
+        CollisionLayers:collidesWith(  -- What the player CAN DETECT (triggers collision callbacks)
+            CollisionLayers.ENEMY, 
+            CollisionLayers.PROJECTILE, 
+            CollisionLayers.E_PROJECTILE, 
+            CollisionLayers.POWERUP
+        )
+    )
 
     self:setPhysicsBody(self.physicsBody)
 

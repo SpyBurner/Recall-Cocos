@@ -31,8 +31,22 @@ function MovementControl:update(dt)
         -- print("Joystick is nil")
     end
     
-    -- ✅ Apply movement using direction
-    self.physicsBody:setVelocity(cc.p(self.direction.x * self.speed, self.physicsBody:getVelocity().y))
+    
+    -- Remove all speed when change direction
+    if (self.physicsBody:getVelocity().x * self.direction.x < 0) then
+        self.physicsBody:setVelocity(cc.p(0, self.physicsBody:getVelocity().y))
+    end
+
+    -- Remove all speed when release button
+    if (math.abs(self.direction.x) <= 0.1) then
+        self.physicsBody:setVelocity(cc.p(0, self.physicsBody:getVelocity().y))
+    end
+
+    -- Apply force to the physics body
+    self.physicsBody:applyForce(cc.p(self.direction.x * self.speed, 0))
+    if self.physicsBody:getVelocity().x > self.speed then
+        self.physicsBody:setVelocity(cc.p(self.speed, self.physicsBody:getVelocity().y))
+    end
 end
 
 return MovementControl
