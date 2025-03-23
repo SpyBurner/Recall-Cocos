@@ -6,21 +6,23 @@ local CollisionLayers = require("app.core.CollisionLayers")
 
 local JumpComponent = class("JumpComponent", Component)
 
-function JumpComponent:ctor(owner, jumpStrength, physicsWorld, rayCastHeight)
+function JumpComponent:ctor(owner, jumpStrength, rayCastHeight)
     Component.ctor(self, owner)
     self.jumpStrength = jumpStrength
     self.isOnGround = false
-    self.rayCastHeight = 60
-    self.physicsWorld = physicsWorld
+    self.rayCastHeight = 100
 
     if (owner.joystick) then
         self.joystick = owner.joystick
     end
 end
 
+local lastRayCast = 0
+
 function JumpComponent:update(dt)
     if not self.isEnabled then return end  -- ✅ Fix variable name
 
+    -- Jump if the player is pressing up
     if self.joystick then
         local direction = self.joystick:getDirection()
         if direction.y == 1 then
@@ -28,21 +30,29 @@ function JumpComponent:update(dt)
         end
     end
 
+    -- ✅ Use dt-based timer instead of os.time()
+    self.lastRayCast = (self.lastRayCast or 0) + dt
+    if self.lastRayCast < 0.2 then return end
+    self.lastRayCast = 0
+
+    -- ✅ Ensure we are raycasting correctly
     local startPos = self.owner:getPhysicsBody():getPosition()
-    local endPos = cc.p(startPos.x, startPos.y - self.rayCastHeight)
+    local physicsWorld = cc.Director:getInstance():getRunningScene():getPhysicsWorld()
 
-    print ("startPos:", startPos.x, startPos.y)
-    print ("endPos:", endPos.x, endPos.y)
+    local rayStartPos = cc.p(startPos.x, startPos.y - 5)
+    local rayEndPos = cc.p(rayStartPos.x, rayStartPos.y - self.rayCastHeight)
 
-    self.physicsWorld:rayCast(
-        function (world, data)
+    print("Raycasting from:", rayStartPos.x, rayStartPos.y, " to ", rayEndPos.x, rayEndPos.y)
+
+    physicsWorld:rayCast(
+        function(world, data)
             self:onRayCastHit(data)
         end,
-        startPos,
-        endPos
+        rayStartPos,
+        rayEndPos
     )
-    
 end
+
 
 
 
@@ -61,33 +71,23 @@ function JumpComponent:land()
 end
 
 function JumpComponent:onRayCastHit(data)
-    cc.exports.printTable = function(indent, t)
-        print(indent)
-        if (type(t) ~= "table") then
-            print(string.rep(" ", indent) .. t)
-            return
-        end
-        for key, value in pairs(t) do
-            if (type(value) ~= "table") then
-                print(string.rep(" ", indent) .. key, value)
-            else
-                print(string.rep(" ", indent) .. key)
-                printTable(indent + 2, value)
-            end
-        end
-    end
-
-    -- printTable(0, data)
-
     local node = data.shape:getBody():getNode()
-    if node == self.owner then
-        print("Hit self")
-        return true
+
+    if not node then
+        print("Ray hit nothing")
+        return false
     end
 
-    print("Hit different")
-    self:land()
-    return true
+    print("Ray hit object with bitmask:", node:getPhysicsBody():getCategoryBitmask())
+
+    if bit.band(node:getPhysicsBody():getCategoryBitmask(), CollisionLayers.WALL) ~= 0 then
+        print("Hit ground! Landing...")
+        self:land()
+    else
+        print("Hit something else:", node:getPhysicsBody():getCategoryBitmask())
+    end
+
+    return false
 end
 
 return JumpComponent

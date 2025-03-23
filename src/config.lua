@@ -13,14 +13,15 @@ CC_DISABLE_GLOBAL = true
 
 -- for module display
 CC_DESIGN_RESOLUTION = {
-    width = 1280,
-    height = 720,
-    autoscale = "SHOW_ALL",
+    width = 1920,
+    height = 1080,
+    autoscale = "FIXED_WIDTH",
     callback = function(framesize)
         local ratio = framesize.width / framesize.height
-        if ratio <= 1.34 then
-            -- iPad 768*1024(1536*2048) is 4:3 screen
-            return {autoscale = "FIXED_WIDTH"}
+        if ratio < 1.77 then
+            -- Adjust for narrower screens (e.g., 4:3 tablets)
+            return {autoscale = "FIXED_HEIGHT"}
         end
     end
 }
+

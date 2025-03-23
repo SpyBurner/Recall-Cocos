@@ -22,10 +22,8 @@ function Ground:ctor(width, height)
         )
     )
     
-    physicsBody:setContactTestBitmask(  -- ✅ Raycast uses this!
-        CollisionLayers:collidesWith(  
-            CollisionLayers.PLAYER  -- ✅ Allow player raycast detection
-        )
+    physicsBody:setCollisionBitmask(
+        CollisionLayers:collidesWith(CollisionLayers.PLAYER) -- ✅ Make sure player can "hit" the ground
     )
     
 

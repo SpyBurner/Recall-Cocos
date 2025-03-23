@@ -14,6 +14,8 @@ fileUtils:addSearchPath("app/core/")        -- ✅ Core folder (for GameObject, 
 fileUtils:addSearchPath("app/components/")  -- Components folder
 
 local function main()
+    cc.Director:getInstance():getOpenGLView():setFrameSize(1280, 720)
+    
     require("app.MyApp"):create():run()
 end
 

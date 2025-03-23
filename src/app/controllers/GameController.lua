@@ -4,12 +4,16 @@ local Ground = require("app.objects.Ground")
 local GameController = class("GameController", cc.Node)
 
 function GameController:ctor(physicsWorld)
-    local player = ControllableObject:create(physicsWorld, 700, 600, true)  -- ✅ Player-controlled
+    local player = ControllableObject:create(150, 600, true)  -- ✅ Player-controlled
     player:setPosition(cc.p(display.cx, display.cy + 100))
     self:addChild(player)
 
+    local ground1 = Ground:create(50, display.height)
+    ground1:setPosition(cc.p(display.cx, 50))
+    self:addChild(ground1)
+
     local ground2 = Ground:create(500, 200)
-    ground2:setPosition(cc.p(display.cx, 0))
+    ground2:setPosition(cc.p(display.cx,  0))
     self:addChild(ground2)
 
 

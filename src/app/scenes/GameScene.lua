@@ -15,7 +15,7 @@ function GameScene:ctor()
     self:addChild(self.view)
 
     -- ✅ Create game controller (handles player)
-    self.controller = GameController:create(physicsWorld)
+    self.controller = GameController:create()
     self:addChild(self.controller)
 end
 

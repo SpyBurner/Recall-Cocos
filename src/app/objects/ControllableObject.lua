@@ -7,7 +7,7 @@ local CollisionLayers = require("app.core.CollisionLayers")
 
 local ControllableObject = class("ControllableObject", GameObject)
 
-function ControllableObject:ctor(physicsWorld, speed, jumpStrength, isPlayer)
+function ControllableObject:ctor(speed, jumpStrength, isPlayer)
     GameObject.ctor(self)  -- ✅ Call base constructor
 
     self.physicMaterial = cc.PhysicsMaterial(0, 0, 0)  -- ✅ Create a physic material
@@ -48,7 +48,7 @@ function ControllableObject:ctor(physicsWorld, speed, jumpStrength, isPlayer)
     self:addComponent(self.movementControl)
 
     -- ✅ Attach jump component
-    self.jumpControl = JumpControl:create(self, jumpStrength, physicsWorld)
+    self.jumpControl = JumpControl:create(self, jumpStrength)
     self:addComponent(self.jumpControl)
 
     -- ✅ Create visual representation

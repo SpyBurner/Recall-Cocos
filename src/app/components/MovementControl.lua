@@ -1,13 +1,17 @@
 local Component = require("app.core.Component")
 local Joystick = require("app.components.Joystick")
 
+local CollisionLayers = require("app.core.CollisionLayers")
+
 local MovementControl = class("MovementControl", Component)
 
-function MovementControl:ctor(owner, speed, playerControlled)
+function MovementControl:ctor(owner, speed, playerControlled, wallDistance)
     Component.ctor(self, owner)  -- ✅ Call base class constructor
 
     self.speed = speed or 200  -- ✅ Default speed
     self.direction = cc.p(0, 0)
+    
+    self.wallDistance = wallDistance or 20
 
     if playerControlled then
         self.joystick = self.owner.joystick
@@ -22,31 +26,50 @@ function MovementControl:ctor(owner, speed, playerControlled)
 end
 
 function MovementControl:update(dt)
-    if not self.isEnabled then return end  -- ✅ Fix variable name
+    if not self.isEnabled then return end
+
+    local newVelocityX = 0  -- Default to stop movement
 
     if self.joystick then
-        -- print("Joystick is not nil")
-        self.direction = self.joystick:getDirection()  -- ✅ Fix function name
-    else
-        -- print("Joystick is nil")
-    end
-    
-    
-    -- Remove all speed when change direction
-    if (self.physicsBody:getVelocity().x * self.direction.x < 0) then
-        self.physicsBody:setVelocity(cc.p(0, self.physicsBody:getVelocity().y))
+        self.direction = self.joystick:getDirection()
     end
 
-    -- Remove all speed when release button
-    if (math.abs(self.direction.x) <= 0.1) then
-        self.physicsBody:setVelocity(cc.p(0, self.physicsBody:getVelocity().y))
+    if math.abs(self.direction.x) > 0.1 then
+        -- ✅ Check for wall before moving
+        if not self:isWallAhead(self.direction.x) then
+            newVelocityX = self.direction.x * self.speed
+        else
+            newVelocityX = 0  -- Stop if a wall is ahead
+        end
     end
 
-    -- Apply force to the physics body
-    self.physicsBody:applyForce(cc.p(self.direction.x * self.speed, 0))
-    if self.physicsBody:getVelocity().x > self.speed then
-        self.physicsBody:setVelocity(cc.p(self.speed, self.physicsBody:getVelocity().y))
-    end
+    local velocityY = self.physicsBody:getVelocity().y
+    self.physicsBody:setVelocity(cc.p(newVelocityX, velocityY))
+end
+
+function MovementControl:isWallAhead(direction)
+    local physicsWorld = cc.Director:getInstance():getRunningScene():getPhysicsWorld()
+    
+    local posX, posY = self.owner:getPosition()
+    local startPos = cc.p(posX, posY)
+    local offsetX = direction * self.wallDistance  -- Adjust this to avoid false positives
+    local rayStartPos = cc.p(startPos.x, startPos.y)
+    local rayEndPos = cc.p(startPos.x + offsetX, startPos.y)
+
+    local hitWall = false
+
+    physicsWorld:rayCast(
+        function(world, data)
+            local hitNode = data.shape:getBody():getNode()
+            if hitNode and bit.band(hitNode:getPhysicsBody():getCategoryBitmask(), CollisionLayers.WALL) ~= 0 then
+                hitWall = true
+            end
+        end,
+        rayStartPos,
+        rayEndPos
+    )
+
+    return hitWall
 end
 
 return MovementControl
