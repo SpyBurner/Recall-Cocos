@@ -1,6 +1,8 @@
 local ControllableObject = require("app.objects.ControllableObject") 
 local Ground = require("app.objects.Ground")  
 local CameraFollow = require("app.components.CameraFollow")
+local Tilemap = require("app.objects.Tilemap")
+
 
 local GameController = class("GameController", cc.Node)
 
@@ -18,18 +20,21 @@ function GameController:ctor(physicsWorld)
     ground1:setPosition(cc.p(display.cx, 50))
     self:addChild(ground1)
 
-    local ground2 = Ground:create(500, 20)
-    ground2:setPosition(cc.p(display.cx, 50))
-    self:addChild(ground2)
+    -- local ground2 = Ground:create(500, 20)
+    -- ground2:setPosition(cc.p(display.cx, 50))
+    -- self:addChild(ground2)
 
-    local ground3 = Ground:create(200, 20)
-    ground3:setPosition(cc.p(display.cx + 300, 100))
-    self:addChild(ground3)
+    -- local ground3 = Ground:create(200, 20)
+    -- ground3:setPosition(cc.p(display.cx + 300, 100))
+    -- self:addChild(ground3)
 
-    local ground4 = Ground:create(200, 20)
-    ground4:setPosition(cc.p(display.cx + 600, 200))
-    self:addChild(ground4)
+    -- local ground4 = Ground:create(200, 20)
+    -- ground4:setPosition(cc.p(display.cx + 600, 200))
+    -- self:addChild(ground4)
 
+    local map = Tilemap:create("res/maps/simple_map.tmx")  -- Load your TMX file
+    map:setPosition(cc.p(0, 0))
+    self:addChild(map)
 
 
     -- ✅ Enable update loop (Only needed if GameController has its own logic)
