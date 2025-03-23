@@ -11,7 +11,7 @@ function MovementControl:ctor(owner, speed, playerControlled, wallDistance)
     self.speed = speed or 200  -- ✅ Default speed
     self.direction = cc.p(0, 0)
     
-    self.wallDistance = wallDistance or 20
+    self.wallDistance = wallDistance or 50
 
     if playerControlled then
         self.joystick = self.owner.joystick
