@@ -15,7 +15,7 @@ fileUtils:addSearchPath("app/components/")  -- Components folder
 
 local function main()
     local glview = cc.Director:getInstance():getOpenGLView()
-    glview:setFrameSize(1280, 720)
+    glview:setFrameSize(1920, 1030)
     -- glview:setFullScreenEnabled(true)
     
     require("app.MyApp"):create():run()

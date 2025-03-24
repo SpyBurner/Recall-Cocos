@@ -83,12 +83,12 @@ function JumpComponent:onRayCastHit(data)
     local normal = data.normal  -- ✅ Get the normal vector of the hit point
 
     -- ✅ Print hit normal for debugging
-    print(string.format("Ray hit at Y: %.2f -> %.2f, Normal: (%.2f, %.2f), Bitmask: %d",
-        data.start.y, data.contact.y, normal.x, normal.y, category))
+    -- print(string.format("Ray hit at Y: %.2f -> %.2f, Normal: (%.2f, %.2f), Bitmask: %d",
+    --     data.start.y, data.contact.y, normal.x, normal.y, category))
 
     -- ✅ Only land if the normal is pointing upwards (prevents jumping against walls)
     if bit.band(category, CollisionLayers.WALL) ~= 0 and math.abs(normal.y) > 0.5 then
-        print("✅ Landed on ground!")
+        -- print("✅ Landed on ground!")
         self:land()
     end
 

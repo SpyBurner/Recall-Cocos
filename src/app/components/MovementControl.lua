@@ -28,24 +28,29 @@ end
 function MovementControl:update(dt)
     if not self.isEnabled then return end
 
-    local newVelocityX = 0  -- Default to stop movement
-
     if self.joystick then
         self.direction = self.joystick:getDirection()
     end
 
     if math.abs(self.direction.x) > 0.1 then
-        -- ✅ Check for wall before moving
-        if not self:isWallAhead(self.direction.x) then
-            newVelocityX = self.direction.x * self.speed
-        else
-            newVelocityX = 0  -- Stop if a wall is ahead
-        end
+        -- ✅ Check if there's a wall before applying force
+        -- if not self:isWallAhead(self.direction.x) then
+            local force = cc.p(self.direction.x * self.speed * 1000, 0)  -- ✅ Large force for instant acceleration
+            self.physicsBody:applyForce(force, self.physicsBody:getPosition())
+        -- end
+    else -- ✅ Stop if no input
+        self.physicsBody:setVelocity(cc.p(0, self.physicsBody:getVelocity().y))
     end
 
-    local velocityY = self.physicsBody:getVelocity().y
-    self.physicsBody:setVelocity(cc.p(newVelocityX, velocityY))
+    -- ✅ Clamp velocity to prevent overshooting
+    local velocity = self.physicsBody:getVelocity()
+    if math.abs(velocity.x) > self.speed then
+        local clampedVelocityX = (velocity.x > 0) and self.speed or -self.speed
+        self.physicsBody:setVelocity(cc.p(clampedVelocityX, velocity.y))  -- ✅ Limit to max speed
+    end
 end
+
+
 
 function MovementControl:isWallAhead(direction)
     local physicsWorld = cc.Director:getInstance():getRunningScene():getPhysicsWorld()

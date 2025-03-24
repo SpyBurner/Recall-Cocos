@@ -25,7 +25,7 @@ function CameraFollow:update(dt)
 
     -- ✅ Calculate the distance between camera & player
     local dx = playerPos.x - cameraPos.x
-    local dy = playerPos.y - cameraPos.y
+    local dy = (playerPos.y - cameraPos.y) * 5
     local distance = math.sqrt(dx * dx + dy * dy)
 
     -- ✅ Only move camera if player is outside the deadzone

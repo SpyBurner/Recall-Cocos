@@ -7,12 +7,19 @@ local CollisionLayers = require("app.core.CollisionLayers")
 
 local ControllableObject = class("ControllableObject", GameObject)
 
-function ControllableObject:ctor(speed, jumpStrength, isPlayer)
+function ControllableObject:ctor(width, height, scale, speed, jumpStrength, isPlayer)
     GameObject.ctor(self)  -- ✅ Call base constructor
 
     self.physicMaterial = cc.PhysicsMaterial(0, 0, 0)  -- ✅ Create a physic material
 
-    self.physicsBody = cc.PhysicsBody:createBox(cc.size(50, 50), self.physicMaterial)
+    self.width = width 
+    self.height = height
+    self.scale = scale
+
+    self.width = self.width * self.scale
+    self.height = self.height * self.scale
+
+    self.physicsBody = cc.PhysicsBody:createBox(cc.size(self.width, self.height), self.physicMaterial)
     self.physicsBody:setDynamic(true)
     self.physicsBody:setRotationEnable(false)
     
@@ -44,17 +51,17 @@ function ControllableObject:ctor(speed, jumpStrength, isPlayer)
     end
 
     -- ✅ Attach movement component
-    self.movementControl = MovementControl:create(self, speed, isPlayer)
+    self.movementControl = MovementControl:create(self, speed, isPlayer, 100)
     self:addComponent(self.movementControl)
 
     -- ✅ Attach jump component
     self.jumpControl = JumpControl:create(self, jumpStrength)
     self:addComponent(self.jumpControl)
-
-    -- ✅ Create visual representation
-    self.sprite = cc.LayerColor:create(cc.c4b(0, 255, 0, 255), 50, 50)
-    self.sprite:setPosition(cc.p(-25, -25))
-    self:addChild(self.sprite)
+    
+    -- -- ✅ Create visual representation
+    -- self.sprite = cc.LayerColor:create(cc.c4b(0, 255, 0, 255), 50, 50)
+    -- self.sprite:setPosition(cc.p(-25, -25))
+    -- self:addChild(self.sprite)
 end
 
 return ControllableObject
