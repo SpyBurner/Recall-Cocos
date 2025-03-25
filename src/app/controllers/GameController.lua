@@ -6,6 +6,7 @@ local AnimationComponent = require("app.components.AnimationComponent")
 local PlayerAnimationControl = require("app.components.player.PlayerAnimationControl")
 local MouseTracker = require("app.components.control.MouseTracker")
 local BaseObject = require("app.objects.BaseObject")  -- Import the base GameObject class
+local BoxObject = require("app.objects.BoxObject")  -- Import the BoxObject class
 
 
 local GameController = class("GameController", cc.Node)
@@ -48,20 +49,26 @@ function GameController:ctor()
 
     -- Mouse control
 
-    local controlHandlerObject = BaseObject:create()
-    -- controlHandlerObject:setPosition(0, 0)
+    -- local controlHandlerObject = BaseObject:create()
+    -- controlHandlerObject:setAnchorPoint(cc.p(0.5, 0.5))
+    -- -- controlHandlerObject:setPosition(0, 0)
 
-    local cursor = cc.LayerColor:create(cc.c4b(0, 255, 0, 255), 50, 50)
-    cursor:setAnchorPoint(cc.p(0.5, 0.5))
-    controlHandlerObject:addChild(cursor)
-    cursor:setPosition(cc.p(0, 0))
+    -- local cursor = cc.LayerColor:create(cc.c4b(0, 255, 0, 255), 50, 50)
+    -- -- cursor:setAnchorPoint(cc.p(0.5, 0.5))
+    -- controlHandlerObject:addChild(cursor)
+    -- cursor:setPosition(cc.p(-25, -25))
 
 
-    local mouseTracker = MouseTracker:create(controlHandlerObject, true)
-    controlHandlerObject:addComponent(mouseTracker)
+    -- local mouseTracker = MouseTracker:create(controlHandlerObject, true)
+    -- controlHandlerObject:addComponent(mouseTracker)
 
-    self:addChild(controlHandlerObject)
+    -- self:addChild(controlHandlerObject)
     -- Mouse control
+
+    -- Physic object
+
+    -- Physic object
+
 
 end
 

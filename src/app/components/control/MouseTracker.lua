@@ -2,18 +2,19 @@ local Component = require("app.core.Component")
 
 local MouseTracker = class("MouseTracker", Component)
 
-function MouseTracker:ctor(owner, moveToMouse)
+function MouseTracker:ctor(owner, moveToMouse, yOffset)
     Component.ctor(self, owner)
     self.mouseX, self.mouseY = 0, 0
     self.moveToMouse = moveToMouse or false
+    self.yOffset = yOffset or 50
 
     -- ✅ Mouse event listener
     local function onMouseMove(event)
         local screenPos = event:getLocation()  -- Screen-space coordinates
-        print("🟡 [Screen Space] Event Location:", screenPos.x, screenPos.y)
+        -- print("🟡 [Screen Space] Event Location:", screenPos.x, screenPos.y)
 
         local worldPos = cc.p(self:convertToWorldSpace(screenPos.x, screenPos.y))
-        print("🟢 [World Space] Converted World Position:", worldPos.x, worldPos.y)
+        -- print("🟢 [World Space] Converted World Position:", worldPos.x, worldPos.y)
 
         self.mouseX, self.mouseY = worldPos.x, worldPos.y
     end
@@ -40,7 +41,7 @@ function MouseTracker:convertToWorldSpace(x, y)
     -- local worldPos = camera:convertToWorldSpace(cc.p(x, flippedY))
     local camPos = cc.p(camera:getPosition())
 
-    local worldPos = cc.p(camPos.x + x - winSize.width/2, camPos.y + flippedY - winSize.width/2 + 120)
+    local worldPos = cc.p(camPos.x + x - winSize.width/2, camPos.y + flippedY - winSize.width/2 + 120 + self.yOffset)
 
     return worldPos.x, worldPos.y
 end
