@@ -8,6 +8,7 @@ local MouseTracker = require("app.components.control.MouseTracker")
 local BaseObject = require("app.objects.BaseObject")  -- Import the base GameObject class
 local Box16 = require("app.objects.BoxCollection.Box16")  -- Import the BoxObject class
 
+local Blob = require("app.objects.Enemy.Blob")
 
 local GameController = class("GameController", cc.Node)
 
@@ -18,17 +19,18 @@ function GameController:ctor()
     self:addChild(map)
 
     -- PLAYER
-    local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 600, true)  -- ✅ Player-controlled
+    local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 600, true, "Player")  -- ✅ Player-controlled
     player:setPosition(cc.p(100, display.cy))
+    player:setLocalZOrder(10)  -- ✅ Set Z-order to ensure player is on top of the map
 
     -- Animation
     local animations = {
         { name = "idle", plist = "res/Sprites/Player/idle/Idle.plist", frameTime = 0.2, loop = true },
         { name = "walk", plist = "res/Sprites/Player/walk/Walk.plist", frameTime = 0.1, loop = true },
-        { name = "jump", plist = "res/Sprites/Player/jump/Jump.plist", frameTime = 0.15, loop = false, callback = function()
-            print("Jump animation finished!")
+        { name = "jump", plist = "res/Sprites/Player/jump/Jump.plist", frameTime = 0.15, loop = false },
+        { name = "dead", plist = "res/Sprites/Player/dead/dead.plist", frameTime = 0.1, loop = false, callback = function()
+            print("Player is dead!")
         end },
-        { name = "dead", plist = "res/Sprites/Player/dead/dead.plist", frameTime = 0.1, loop = false,}
     }
     
     local animComponent = AnimationComponent:create(player, animations, 5)
@@ -71,6 +73,13 @@ function GameController:ctor()
 
     self:addChild(physicObject)
     -- Physic object
+
+    -- Enemy
+    local blob1 = Blob:create(player)  -- Pass the player as the target
+    blob1:setPosition(cc.p(300, display.cy + 200))
+
+    self:addChild(blob1)
+    -- Enemy
 
 
 end

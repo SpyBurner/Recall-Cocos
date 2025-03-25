@@ -35,17 +35,18 @@ function CoreStat:TakeDamage(damage)
     self.lastIframe = os.time()  -- ✅ Update last iframe time
     self.hp = self.hp - damage
     
-    print("💥 CoreStat: Taking damage:", damage)
+    print("💥 CoreStat: ", self.owner:getName()," taking damage:", damage)
 
     self.OnHpChangeEvent:Invoke(self.hp)  -- ✅ Invoke the HP change event
 
     if self.hp <= 0 then
         self.hp = 0
-        self:Die()
+        self:Die(self.owner)  -- ✅ Call the die function if HP is zero
     end
 end
 
-function CoreStat:Die()
+function CoreStat:Die(theDeathObject)
+    if theDeathObject ~= self.owner then return end  -- ✅ Ensure the object is the same as the owner
     if self.isDead then return end
     self.isDead = true
 

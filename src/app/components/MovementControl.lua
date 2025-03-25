@@ -5,7 +5,7 @@ local CollisionLayers = require("app.core.CollisionLayers")
 
 local MovementControl = class("MovementControl", Component)
 
-function MovementControl:ctor(owner, speed, playerControlled, wallDistance)
+function MovementControl:ctor(owner, speed, wallDistance)
     Component.ctor(self, owner)  -- ✅ Call base class constructor
 
     self.speed = speed or 200  -- ✅ Default speed
@@ -13,14 +13,7 @@ function MovementControl:ctor(owner, speed, playerControlled, wallDistance)
     
     self.wallDistance = wallDistance or 50
 
-    if playerControlled then
-        self.joystick = self.owner.joystick
-        print("Player controlled")
-    else
-        print("Not player controlled")
-    end
-
-
+    self.joystick = self.owner.joystick
     self.physicsBody = self.owner.physicsBody
 
     self.stat = self.owner:getComponent("CoreStat")

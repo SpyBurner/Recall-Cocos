@@ -13,6 +13,8 @@ function Joystick:ctor(owner, keyUp, keyDown, keyLeft, keyRight)
     self.keyLeft = keyLeft
     self.keyRight = keyRight
 
+    self.playerControlled = (keyUp ~= nil and keyDown ~= nil and keyLeft ~= nil and keyRight ~= nil)
+
     -- ✅ Run input initialization on the owner (which is a Node)
     if owner and owner.runAction then
         owner:runAction(cc.Sequence:create(
@@ -37,6 +39,15 @@ function Joystick:ctor(owner, keyUp, keyDown, keyLeft, keyRight)
     end)
 end
 
+function Joystick:setDirection(x, y)
+    if x and y then
+        self.direction.x = x
+        self.direction.y = y
+    else
+        error("❌ Joystick Error: Invalid direction values")
+    end
+end
+
 function Joystick:getDirection()
     return self.direction
 end
@@ -44,6 +55,8 @@ end
 function Joystick:update(dt)
     -- print("Joystick update")
     if not self.isEnabled then return end 
+
+    if not self.playerControlled then return end  -- Only update if player-controlled
 
     if Input.isKeyPressed(self.keyUp) then
         self.direction.y = 1

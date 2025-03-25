@@ -26,7 +26,7 @@ function DamageOnContact:ctor(owner, damageAmount)
 end
 
 function DamageOnContact:handleContactBegin(contact)
-    print("Contact detected!")
+    -- print("Contact detected!")
     local nodeA = contact:getShapeA():getBody():getNode()
     local nodeB = contact:getShapeB():getBody():getNode()
 
@@ -51,7 +51,7 @@ function DamageOnContact:handleContactEnd(contact)
 
     if (not nodeA or not nodeB or not(nodeA == self.owner or nodeB == self.owner)) then return end
 
-    print("Contact ended!")
+    -- print("Contact ended!")
     self.isColliding = false  
     self.target = nil  
 end
