@@ -8,7 +8,7 @@ local Blob = class("Blob")
 
 function Blob:create(target)
     -- blob
-    local blob = ControllableObject:create(1, 0, 8, 8, 5, 90, 600, false, "Blob")  -- ✅ blob-controlled
+    local blob = ControllableObject:create(1, 0, 8, 8, 5, 90, 200, false, "Blob")  -- ✅ blob-controlled
     blob:setPosition(cc.p(100, display.cy))
 
     -- Animation

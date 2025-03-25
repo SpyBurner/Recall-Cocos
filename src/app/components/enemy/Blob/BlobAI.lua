@@ -1,5 +1,6 @@
 local Component = require("app.core.Component")
 local CollisionLayers = require("app.core.CollisionLayers")
+local bit = require("bit")
 
 local BlobAI = class("BlobAI", Component)
 
@@ -17,65 +18,96 @@ function BlobAI:ctor(owner, target)
     if not self.jumpComponent then
         error("BlobAI requires a JumpComponent on the owner.")
     end
-    
+
     self.hitForward = false
     self.hitDown = false
+    self.lastRayCast = 0  -- Timer for raycast interval
 end
 
 function BlobAI:update(dt)
-    -- print("Blob ground check: ", self.jumpComponent.isOnGround)
-
     if not self.isEnabled then return end
+
+    -- ✅ Use dt-based timing (like `JumpComponent`)
+    self.lastRayCast = (self.lastRayCast or 0) + dt
+    if self.lastRayCast < 0.1 then return end
+    self.lastRayCast = 0
 
     local position = cc.p(self.owner:getPosition())
     local physicsWorld = self.owner:getScene():getPhysicsWorld()
 
-    -- ✅ Define Raycast Directions
-    local forwardCheck = cc.pAdd(position, cc.p(self.direction.x * 50, 0))  -- Forward
-    local downCheck = cc.pAdd(forwardCheck, cc.p(0, -45))  -- 45° downward
+    -- ✅ Define Multiple Raycast Positions
+    local offsets = {-10, 0, 10}  -- ✅ Cast from Left, Center, Right
+    local forwardLength = 25
+    local downwardLength = 45
 
-    -- ✅ Perform Raycast Checks
+    -- ✅ Collision Mask
     local mask = bit.bor(CollisionLayers.WALL, CollisionLayers.PUSHABLE)
 
-    local function checkBit(contact)
-        local body = contact.shape:getBody()
-        if body and bit.bor(body:getCategoryBitmask(), mask) ~= 0 then
-            -- Hit detected, return true to stop the raycast
-            return true
+    -- ✅ Reset hit detection before new raycast
+    self.hitForward = false
+    self.hitDown = false
+    
+    local function raycastCallbackForward(data)
+        local node = data.shape:getBody():getNode()
+        if not node then return true end  -- ✅ Ensure node exists
+        local category = node:getPhysicsBody():getCategoryBitmask()
+        
+        if (bit.band(category, mask) ~= 0) then
+            print("✅ Forward Ray Hit Detected!")  -- ✅ Debug print
+            self.hitForward = true
         end
-        return false  -- No hit
-    end
+        print("Raycast forward hit category:", category)  -- ✅ Debug print
 
-    local function raycastCallbackForward(world, contact)
-        self.hitForward = checkBit(contact)
+        return true
     end
-    local function raycastCallbackDown(world, contact)
-        self.hitForward = checkBit(contact)
+    
+    local function raycastCallbackDown(data)
+        local node = data.shape:getBody():getNode()
+        if not node then return true end  -- ✅ Ensure node exists
+        local category = node:getPhysicsBody():getCategoryBitmask()
+        
+        if (bit.band(category, mask) ~= 0) then
+            print("✅ Downward Ray Hit Detected!")  -- ✅ Debug print
+            self.hitDown = true
+        end
+        print("Raycast downward hit category:", category)  -- ✅ Debug print
+        return true
     end
+    
 
-    physicsWorld:rayCast(raycastCallbackForward, position, forwardCheck)
-    physicsWorld:rayCast(raycastCallbackDown, forwardCheck, downCheck)
+    for _, offsetX in ipairs(offsets) do
+        local startX = position.x + offsetX
+        local startForward = cc.p(startX + self.direction.x * forwardLength, position.y)
+        local endForward = cc.p(startX + (self.direction.x * forwardLength), position.y)  
+        local endDown = cc.p(endForward.x, endForward.y - downwardLength)
 
-    -- ✅ Only turn around if on ground
-    if self.jumpComponent.isOnGround and not self.hitForward and not self.hitDown then
+        print("Position: ", position.x, position.y)  -- ✅ Debug print
+        print("Raycast positions: ", startForward.x, startForward.y, "\n", endForward.x, endForward.y,"\n", endDown.x, endDown.y)  -- ✅ Debug print
+    
+        -- ✅ Perform raycasts
+        physicsWorld:rayCast(function(world, data) raycastCallbackForward(data) end, startForward, endForward)
+        physicsWorld:rayCast(function(world, data) raycastCallbackDown(data) end, endForward, endDown)
+    end
+    
+    
+
+    -- ✅ Only turn around if on ground & no forward/downward obstacle
+    if self.jumpComponent.isOnGround and (self.hitForward or not self.hitDown) then
         self.direction.x = -self.direction.x  -- Flip direction
     end
 
-    -- ✅ Check if target is higher
+    -- ✅ Move Up if Target is Higher
     if self.target then
         local targetPos = cc.p(self.target:getPosition())
-        if targetPos.y > position.y + 10 then
-            self.direction.y = 1  -- Move up
-        else
-            self.direction.y = 0  -- Move normally
-        end
+        self.direction.y = (targetPos.y > position.y + 100) and 1 or 0
     end
 
     -- ✅ Apply Direction to Joystick
     self.joystick:setDirection(self.direction.x, self.direction.y)
 
-    self.hitForward = false  -- Reset hit check for next frame
-    self.hitDown = false  -- Reset hit check for next frame
+    print("Hit: ", self.hitForward, self.hitDown)
+    print("isOnGround: ", self.jumpComponent.isOnGround)
+    print("Direction: ", self.direction.x, self.direction.y)
 end
 
 return BlobAI
