@@ -43,6 +43,7 @@ function ControllableObject:ctor(maxHP, iframe, width, height, scale, speed, jum
             CollisionLayers.ENEMY, 
             CollisionLayers.PROJECTILE, 
             CollisionLayers.E_PROJECTILE, 
+            CollisionLayers.SPIKE,
             CollisionLayers.POWERUP
         )
     )

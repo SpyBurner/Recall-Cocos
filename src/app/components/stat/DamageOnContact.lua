@@ -21,12 +21,7 @@ function DamageOnContact:ctor(owner, damageAmount)
     local eventListener = cc.EventListenerPhysicsContact:create()
     eventListener:registerScriptHandler(onContactBegin, cc.Handler.EVENT_PHYSICS_CONTACT_BEGIN)
 
-    local eventDispatcher = self.owner:getEventDispatcher()
-    eventDispatcher:addEventListenerWithSceneGraphPriority(eventListener, self.owner)
-
-    if (eventDispatcher) then
-        print("✅ DamageOnContact: Event dispatcher found!")
-    end
+    self.owner:getEventDispatcher():addEventListenerWithSceneGraphPriority(eventListener, self.owner)
 end
 
 function DamageOnContact:handleContact(contact)
@@ -36,13 +31,15 @@ function DamageOnContact:handleContact(contact)
     local nodeA = contact:getShapeA():getBody():getNode()
     local nodeB = contact:getShapeB():getBody():getNode()
 
+    print("💥 DamageOnContact: Node A:", nodeA, "Node B:", nodeB)
+
     -- ✅ Ensure nodes are valid
     if not nodeA or not nodeB then return end
 
     -- ✅ Check which node is the owner, and find the other
     local other = (nodeA == self.owner) and nodeB or nodeA
 
-    -- ✅ Check if the other object has `CoreStat`
+    -- ✅ Check if the other object has CoreStat
     local coreStat = other:getComponent("CoreStat")
     if coreStat then
         print("💥 DamageOnContact: Dealing", self.damage, "damage to", other.__cname)

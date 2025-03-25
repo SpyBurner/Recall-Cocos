@@ -17,6 +17,11 @@ function GameScene:ctor()
     -- ✅ Create game controller (handles player)
     self.controller = GameController:create()
     self:addChild(self.controller)
+
 end
+
+
+
+
 
 return GameScene

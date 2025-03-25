@@ -7,7 +7,7 @@ local PlayerAnimationControl = require("app.components.player.PlayerAnimationCon
 
 local GameController = class("GameController", cc.Node)
 
-function GameController:ctor(physicsWorld)
+function GameController:ctor()
     
     local map = Tilemap:create("res/maps/simple_map.tmx", 5)  -- Load your TMX file
     map:setPosition(cc.p(0, 0))

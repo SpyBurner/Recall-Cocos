@@ -1,6 +1,8 @@
 local GameObject = require("app.core.GameObject")
 local CollisionLayers = require("app.core.CollisionLayers")
 local DamageOnContact = require("app.components.stat.DamageOnContact")
+local BaseObject = require("app.objects.BaseObject")
+
 
 local Tilemap = class("Tilemap", GameObject)
 
@@ -144,16 +146,15 @@ function Tilemap:setupDamageLayer(layerName, damage)
                 body:setDynamic(false)  -- ✅ Static body (doesn't move)
                 body:setCategoryBitmask(CollisionLayers.SPIKE)  
                 body:setCollisionBitmask(0)  -- ❌ No physical collision (pass-through)
-                body:setContactTestBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER))                  
+                body:setContactTestBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.ENEMY))                  
 
-                local node = GameObject:create()
-                
+                local node = BaseObject:create()
+
                 -- ✅ Flip Y-coordinate for correct positioning
                 local flippedY = (mapHeight - y - 1) * tileSize.height
 
                 node:setPosition((x + 0.5) * tileSize.width, flippedY + (0.5 * tileSize.height))  -- ✅ Centered position
                 node:setPhysicsBody(body)
-                self:addChild(node)
 
                 -- ✅ Add DamageOnContact component
                 local damageComponent = DamageOnContact:create(node, damage)
@@ -162,6 +163,11 @@ function Tilemap:setupDamageLayer(layerName, damage)
                 else
                     print("❌ Failed to create DamageOnContact at:", x, y)
                 end
+
+                -- node:setTag(1)  -- ✅ Mark as a damage tile
+
+
+                self:addChild(node)  -- ✅ Add to the tilemap node
             end
         end
     end
