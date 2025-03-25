@@ -49,6 +49,9 @@ function CoreStat:Die()
     if self.isDead then return end
     self.isDead = true
 
+    local body = self.owner:getPhysicsBody()
+    body.velocity = cc.p(0, 0)  -- ✅ Stop the object from moving
+
     -- ✅ Invoke the event, triggering all registered listeners
     self.OnDeathEvent:Invoke(self.owner)
 end

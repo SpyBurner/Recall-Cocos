@@ -28,6 +28,7 @@ function Joystick:ctor(owner, keyUp, keyDown, keyLeft, keyRight)
         print("❌ Joystick Error: Owner does not support runAction()")
     end
 
+    self.stat = owner:getComponent("CoreStat")
 end
 
 function Joystick:getDirection()
@@ -37,6 +38,12 @@ end
 function Joystick:update(dt)
     -- print("Joystick update")
     if not self.isEnabled then return end 
+
+    if self.stat.isDead then
+        self.direction.x = 0
+        self.direction.y = 0
+        return
+    end
 
     if Input.isKeyPressed(self.keyUp) then
         self.direction.y = 1

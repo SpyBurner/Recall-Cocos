@@ -1,4 +1,6 @@
 local Component = require("app.core.Component")
+local CoreStat = require("app.components.stat.CoreStat")
+
 local PlayerAnimationControl = class("PlayerAnimationControl", Component)
 
 function PlayerAnimationControl:ctor(owner)
@@ -13,12 +15,21 @@ function PlayerAnimationControl:ctor(owner)
         return
     end
 
-    self.lastDirection = cc.p(1, 0)  
+    self.lastDirection = cc.p(1, 0) 
+    
+    self.stat = self.owner:getComponent("CoreStat")
 end
 
 
 function PlayerAnimationControl:update(dt)
     if not self.animationComponent then return end  -- ✅ Prevent errors
+
+    if self.stat.isDead then
+        if self.animationComponent.animations["dead"] then
+            self.animationComponent:play("dead")
+        end
+        return  -- ✅ Stop further processing if dead
+    end
 
     if self.jumpControl:isJumping() then
         if self.animationComponent.animations["jump"] then
@@ -47,7 +58,6 @@ function PlayerAnimationControl:update(dt)
         self.animationComponent.sprite:setScaleX(-scale)  -- ✅ Face left
     end
 end
-
 
 
 return PlayerAnimationControl

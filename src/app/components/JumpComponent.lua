@@ -15,12 +15,16 @@ function JumpComponent:ctor(owner, jumpStrength, rayCastHeight)
     if (owner.joystick) then
         self.joystick = owner.joystick
     end
+
+    self.stat = owner:getComponent("CoreStat")
 end
 
 local lastRayCast = 0
 
 function JumpComponent:update(dt)
     if not self.isEnabled then return end  
+
+    if self.stat.isDead then return end  -- ✅ Check if the player is dead
 
     -- Jump if pressing up
     if self.joystick then

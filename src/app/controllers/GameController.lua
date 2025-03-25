@@ -4,6 +4,9 @@ local CameraFollow = require("app.components.CameraFollow")
 local Tilemap = require("app.objects.Tilemap")
 local AnimationComponent = require("app.components.AnimationComponent")
 local PlayerAnimationControl = require("app.components.player.PlayerAnimationControl")
+local MouseTracker = require("app.components.control.MouseTracker")
+local GameObject = require("app.core.GameObject")  -- Import the base GameObject class
+
 
 local GameController = class("GameController", cc.Node)
 
@@ -23,7 +26,8 @@ function GameController:ctor()
         { name = "walk", plist = "res/Sprites/Player/walk/Walk.plist", frameTime = 0.1, loop = true },
         { name = "jump", plist = "res/Sprites/Player/jump/Jump.plist", frameTime = 0.15, loop = false, callback = function()
             print("Jump animation finished!")
-        end }
+        end },
+        { name = "dead", plist = "res/Sprites/Player/dead/dead.plist", frameTime = 0.1, loop = false,}
     }
     
     local animComponent = AnimationComponent:create(player, animations, 5)
@@ -34,7 +38,6 @@ function GameController:ctor()
     local playerAnimControl = PlayerAnimationControl:create(player)
     player:addComponent(playerAnimControl)
 
-
     -- PLAYER
 
     -- ✅ Attach CameraFollow component
@@ -43,11 +46,19 @@ function GameController:ctor()
     
     self:addChild(player)
 
-    -- local ground2 = Ground:create(500, 20)
-    -- ground2:setPosition(cc.p(display.cx, 50))
-    -- self:addChild(ground2)
+    -- Mouse control
 
+    local controlHandlerObject = GameObject:create()
+    controlHandlerObject:setPosition(cc.p(display.cx, display.cy))
 
+    local cursor = cc.LayerColor:create(cc.c4b(255, 0, 0, 255), 10, 10)
+    controlHandlerObject:addChild(cursor)
+    cursor:setPosition(cc.p(0, 0))
+
+    -- local mouseTracker = MouseTracker:create(controlHandlerObject)
+    -- controlHandlerObject:addComponent(mouseTracker)
+
+    -- Mouse control
 
 end
 
