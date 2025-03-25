@@ -86,48 +86,49 @@ function AnimationComponent:loadAnimation(animData)
     end
 
     -- ✅ Create animation
-    local animation = cc.Animation:createWithSpriteFrames(frames, frameTime)
-    animation:setLoops(shouldLoop and -1 or 1)
+    -- local animation = cc.Animation:createWithSpriteFrames(frames, frameTime)
+    -- animation:setLoops(shouldLoop and -1 or 1)
 
     -- ✅ Store animation data
     self.animations[name] = {
-        animation = animation,
+        frames = frames,
+        frameTime = frameTime,
+        shouldLoop = shouldLoop,
         callback = callback
     }
     print("✅ Animation stored:", name)
 end
 
 function AnimationComponent:play(name)
-    if self.currentAnimation == name then return end
+    -- print("🎬 Attempting to play animation:", name)
 
     local animData = self.animations[name]
     if not animData then
-        print("❌ Animation not found:", name)
+        -- print("❌ Animation not found in stored list:", name)
         return
     end
 
-    self.currentAnimation = name
-    local animate = cc.Animate:create(animData.animation)
-
-    print("🎬 Playing animation:", name)
-
-    -- ✅ Add callback if animation does NOT loop
-    local sequence
-    if animData.animation:getLoops() == 1 then
-        sequence = cc.Sequence:create(animate, cc.CallFunc:create(function()
-            if animData.callback then
-                print("🔄 Animation finished, calling callback:", name)
-                animData.callback()
-            end
-            -- self.currentAnimation = nil
-        end))
-    else
-        sequence = animate
+    if not animData.frames then
+        -- print("❌ Animation data is nil for:", name)
+        return
     end
 
+    -- ✅ Check if the animation is already playing
+    if self.currentAnimation == name then
+        -- print("🎬 Animation already playing:", name)
+        return
+    end
+
+    self:stop()
+
+    self.currentAnimation = name
+    local animation = cc.Animation:createWithSpriteFrames(animData.frames, animData.frameTime)
+    animation:setLoops(animData.shouldLoop and -1 or 1)
+    local animate = cc.Animate:create(animation)
     self.sprite:stopAllActions()
-    self.sprite:runAction(sequence)
+    self.sprite:runAction(animate)
 end
+
 
 function AnimationComponent:stop()
     self.sprite:stopAllActions()

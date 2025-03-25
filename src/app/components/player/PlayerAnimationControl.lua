@@ -18,30 +18,36 @@ end
 
 
 function PlayerAnimationControl:update(dt)
+    if not self.animationComponent then return end  -- ✅ Prevent errors
+
     if self.jumpControl:isJumping() then
-        self.animationComponent:play("jump")
+        if self.animationComponent.animations["jump"] then
+            self.animationComponent:play("jump")
+        end
     elseif self.movementControl:isMoving() then
-        self.animationComponent:play("walk")
+        if self.animationComponent.animations["walk"] then
+            self.animationComponent:play("walk")
+        end
     else
-        self.animationComponent:play("idle")
+        if self.animationComponent.animations["idle"] then
+            self.animationComponent:play("idle")
+        end
     end
 
+    -- ✅ Handle sprite flipping
     local direction = self.movementControl:getDirection()
-
-    if (math.abs(direction.x) > 0.1) then
-        self.lastDirection = direction  -- ✅ Update last direction only if moving
+    if math.abs(direction.x) > 0.1 then
+        self.lastDirection = direction
     end
 
     local scale = self.animationComponent.scale
-
-    if (direction.x > 0) then
+    if direction.x > 0 then
         self.animationComponent.sprite:setScaleX(scale)  -- ✅ Face right
-    elseif (direction.x < 0) then
+    elseif direction.x < 0 then
         self.animationComponent.sprite:setScaleX(-scale)  -- ✅ Face left
     end
-
-
 end
+
 
 
 return PlayerAnimationControl
