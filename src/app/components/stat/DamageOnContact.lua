@@ -5,7 +5,7 @@ local DamageOnContact = class("DamageOnContact", Component)
 function DamageOnContact:ctor(owner, damageAmount)
     Component.ctor(self, owner)
     self.damage = damageAmount or 10
-    self.isColliding = false  -- Track if collision is ongoing
+    self.isColliding = false  
 
     local physicsBody = self.owner:getPhysicsBody()
     if not physicsBody then
@@ -13,45 +13,47 @@ function DamageOnContact:ctor(owner, damageAmount)
         return
     end
 
-    -- ✅ Enable contact listener
-    local function onContactBegin(contact)
-        return self:handleContactBegin(contact)
-    end
+    -- ✅ Create a single contact listener
+    local eventListener1 = cc.EventListenerPhysicsContact:create()
+    eventListener1:registerScriptHandler(handler(self, self.handleContactBegin), cc.Handler.EVENT_PHYSICS_CONTACT_BEGIN)
 
-    local function onContactEnd(contact)
-        return self:handleContactEnd(contact)
-    end
+    local eventListener2 = cc.EventListenerPhysicsContact:create()
+    eventListener2:registerScriptHandler(handler(self, self.handleContactEnd), cc.Handler.EVENT_PHYSICS_CONTACT_SEPARATE)
 
-    local eventListener = cc.EventListenerPhysicsContact:create()
-    eventListener:registerScriptHandler(onContactBegin, cc.Handler.EVENT_PHYSICS_CONTACT_BEGIN)
-    eventListener:registerScriptHandler(onContactEnd, cc.Handler.EVENT_PHYSICS_CONTACT_SEPARATE)
-
-    self.owner:getEventDispatcher():addEventListenerWithSceneGraphPriority(eventListener, self.owner)
+    -- ✅ Use fixed priority to ensure events fire properly
+    cc.Director:getInstance():getEventDispatcher():addEventListenerWithFixedPriority(eventListener1, 1)
+    cc.Director:getInstance():getEventDispatcher():addEventListenerWithFixedPriority(eventListener2, 2)
 end
 
 function DamageOnContact:handleContactBegin(contact)
-    -- print("💥 DamageOnContact: Collision started!")
-
+    print("Contact detected!")
     local nodeA = contact:getShapeA():getBody():getNode()
     local nodeB = contact:getShapeB():getBody():getNode()
 
     if not nodeA or not nodeB then return false end
 
     local other = (nodeA == self.owner) and nodeB or nodeA
+
     self.target = other:getComponent("CoreStat")
 
     if self.target then
-        -- print("💥 DamageOnContact: Start dealing continuous damage to", other.__cname)
-        self.isColliding = true  -- Mark as in contact
+        self.isColliding = true  
+        self.target:TakeDamage(self.damage)
+        return true  -- ✅ Ensure the event is processed
     end
 
-    return true
+    return false
 end
 
 function DamageOnContact:handleContactEnd(contact)
-    -- print("🛑 DamageOnContact: Collision ended!")
-    self.isColliding = false  -- Stop applying damage
-    self.target = nil  -- Clear reference
+    local nodeA = contact:getShapeA():getBody():getNode()
+    local nodeB = contact:getShapeB():getBody():getNode()
+
+    if (not nodeA or not nodeB or not(nodeA == self.owner or nodeB == self.owner)) then return end
+
+    print("Contact ended!")
+    self.isColliding = false  
+    self.target = nil  
 end
 
 function DamageOnContact:update(dt)

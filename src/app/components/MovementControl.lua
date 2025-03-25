@@ -40,7 +40,10 @@ function MovementControl:isMoving()
 end
 
 function MovementControl:update(dt)
-    if not self.isEnabled then return end
+    if not self.isEnabled then 
+        self.physicsBody:setVelocity(cc.p(0, self.physicsBody:getVelocity().y))  --
+        return 
+    end
 
     
     if self.joystick then

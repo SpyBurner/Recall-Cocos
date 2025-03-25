@@ -6,7 +6,7 @@ local AnimationComponent = require("app.components.AnimationComponent")
 local PlayerAnimationControl = require("app.components.player.PlayerAnimationControl")
 local MouseTracker = require("app.components.control.MouseTracker")
 local BaseObject = require("app.objects.BaseObject")  -- Import the base GameObject class
-local BoxObject = require("app.objects.BoxObject")  -- Import the BoxObject class
+local Box16 = require("app.objects.BoxCollection.Box16")  -- Import the BoxObject class
 
 
 local GameController = class("GameController", cc.Node)
@@ -18,7 +18,7 @@ function GameController:ctor()
     self:addChild(map)
 
     -- PLAYER
-    local player = ControllableObject:create(3, 1, 8, 8, 5, 150, 600, true)  -- ✅ Player-controlled
+    local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 600, true)  -- ✅ Player-controlled
     player:setPosition(cc.p(100, display.cy))
 
     -- Animation
@@ -66,8 +66,8 @@ function GameController:ctor()
     -- Mouse control
 
     -- Physic object
-    local physicObject = BoxObject:create(cc.size(8*5, 8*5))  -- ✅ Player-controlled
-    physicObject:setPosition(cc.p(500, display.cy))
+    local physicObject = Box16:create()
+    physicObject:setPosition(cc.p(400, display.cy))
 
     self:addChild(physicObject)
     -- Physic object
