@@ -165,6 +165,30 @@ function Tilemap:setupDamageLayer(layerName, damage)
     end
 end
 
+-- ✅ Convert world position to tile coordinate
+function Tilemap:worldToTileCoord(worldPos)
+    local tileSize = self.tileSize
+    local mapHeight = self.mapSize.height
+
+    local x = math.floor(worldPos.x / tileSize.width)
+    local y = math.floor((worldPos.y / tileSize.height))
+
+    -- ✅ Flip Y-axis to match TMX coordinate system
+    y = mapHeight - y - 1
+
+    return cc.p(x, y)
+end
+
+-- ✅ Convert tile coordinate to world position (center of tile)
+function Tilemap:tileToWorldCoord(tilePos)
+    local tileSize = self.tileSize
+    local mapHeight = self.mapSize.height
+
+    local x = (tilePos.x + 0.5) * tileSize.width
+    local y = (mapHeight - tilePos.y - 0.5) * tileSize.height  -- ✅ Flip Y-axis for TMX
+
+    return cc.p(x, y)
+end
 
 
 

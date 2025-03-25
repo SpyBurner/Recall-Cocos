@@ -53,10 +53,10 @@ function BlobAI:update(dt)
         local category = node:getPhysicsBody():getCategoryBitmask()
         
         if (bit.band(category, mask) ~= 0) then
-            print("✅ Forward Ray Hit Detected!")  -- ✅ Debug print
+            -- print("✅ Forward Ray Hit Detected!")  -- ✅ Debug print
             self.hitForward = true
         end
-        print("Raycast forward hit category:", category)  -- ✅ Debug print
+        -- print("Raycast forward hit category:", category)  -- ✅ Debug print
 
         return true
     end
@@ -67,10 +67,10 @@ function BlobAI:update(dt)
         local category = node:getPhysicsBody():getCategoryBitmask()
         
         if (bit.band(category, mask) ~= 0) then
-            print("✅ Downward Ray Hit Detected!")  -- ✅ Debug print
+            -- print("✅ Downward Ray Hit Detected!")  -- ✅ Debug print
             self.hitDown = true
         end
-        print("Raycast downward hit category:", category)  -- ✅ Debug print
+        -- print("Raycast downward hit category:", category)  -- ✅ Debug print
         return true
     end
     
@@ -81,8 +81,8 @@ function BlobAI:update(dt)
         local endForward = cc.p(startX + (self.direction.x * forwardLength), position.y)  
         local endDown = cc.p(endForward.x, endForward.y - downwardLength)
 
-        print("Position: ", position.x, position.y)  -- ✅ Debug print
-        print("Raycast positions: ", startForward.x, startForward.y, "\n", endForward.x, endForward.y,"\n", endDown.x, endDown.y)  -- ✅ Debug print
+        -- print("Position: ", position.x, position.y)  -- ✅ Debug print
+        -- print("Raycast positions: ", startForward.x, startForward.y, "\n", endForward.x, endForward.y,"\n", endDown.x, endDown.y)  -- ✅ Debug print
     
         -- ✅ Perform raycasts
         physicsWorld:rayCast(function(world, data) raycastCallbackForward(data) end, startForward, endForward)
@@ -105,9 +105,9 @@ function BlobAI:update(dt)
     -- ✅ Apply Direction to Joystick
     self.joystick:setDirection(self.direction.x, self.direction.y)
 
-    print("Hit: ", self.hitForward, self.hitDown)
-    print("isOnGround: ", self.jumpComponent.isOnGround)
-    print("Direction: ", self.direction.x, self.direction.y)
+    -- print("Hit: ", self.hitForward, self.hitDown)
+    -- print("isOnGround: ", self.jumpComponent.isOnGround)
+    -- print("Direction: ", self.direction.x, self.direction.y)
 end
 
 return BlobAI

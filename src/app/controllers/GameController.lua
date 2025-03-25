@@ -6,6 +6,9 @@ local AnimationComponent = require("app.components.AnimationComponent")
 local PlayerAnimationControl = require("app.components.player.PlayerAnimationControl")
 local MouseTracker = require("app.components.control.MouseTracker")
 local BaseObject = require("app.objects.BaseObject")  -- Import the base GameObject class
+local ReloadGame = require("app.components.control.ReloadLevel")  -- Import the ReloadGame component
+
+local Box8 = require("app.objects.BoxCollection.Box8")  -- Import the BoxObject class
 local Box16 = require("app.objects.BoxCollection.Box16")  -- Import the BoxObject class
 
 local Blob = require("app.objects.Enemy.Blob")
@@ -17,6 +20,9 @@ function GameController:ctor()
     local map = Tilemap:create("res/maps/simple_map.tmx", 5)  -- Load your TMX file
     map:setPosition(cc.p(0, 0))
     self:addChild(map)
+
+    local reload = ReloadGame:create(map)  -- Create the reload component
+    map:addComponent(reload)  -- Add the reload component to the map
 
     -- PLAYER
     local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 600, true, "Player")  -- ✅ Player-controlled
@@ -69,14 +75,19 @@ function GameController:ctor()
 
     -- Physic object
     local physicObject = Box16:create()
-    physicObject:setPosition(cc.p(400, display.cy))
+    physicObject:setPosition(cc.p(300, display.cy + 500))
 
     self:addChild(physicObject)
+
+    local physicObject2 = Box8:create()
+    physicObject2:setPosition(cc.p(800, display.cy + 400))
+    
+    self:addChild(physicObject2)
     -- Physic object
 
     -- Enemy
     local blob1 = Blob:create(player)  -- Pass the player as the target
-    blob1:setPosition(cc.p(300, display.cy + 200))
+    blob1:setPosition(cc.p(350, display.cy + 200))
 
     self:addChild(blob1)
     -- Enemy

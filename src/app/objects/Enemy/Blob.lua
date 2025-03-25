@@ -19,6 +19,10 @@ function Blob:create(target)
             blob:runAction(cc.RemoveSelf:create())
         end },
     }
+
+    blob:getComponent("CoreStat").OnDeathEvent:AddListener(function()
+        blob:getPhysicsBody():setEnabled(false)  -- Disable physics body
+    end)
     
     local animComponent = AnimationComponent:create(blob, animations, 5)
     blob:addComponent(animComponent)
