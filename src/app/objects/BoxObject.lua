@@ -1,13 +1,12 @@
-local GameObject = require("GameObject")
-local CollisionLayers = require("CollisionLayers")
+local GameObject = require("app.core.GameObject")
+local CollisionLayers = require("app.core.CollisionLayers")
 
 local BoxObject = class("BoxObject", GameObject)
 
-function BoxObject:ctor(size, position)
+function BoxObject:ctor(size)
     GameObject.ctor(self)  -- Call parent constructor
 
     size = size or cc.size(50, 50)  -- Default size (50x50)
-    position = position or cc.p(0, 0)  -- Default position
 
     -- ✅ Create physics body
     local physicsBody = cc.PhysicsBody:createBox(size)
@@ -23,7 +22,6 @@ function BoxObject:ctor(size, position)
     )  -- Box reacts to collisions with these layers
 
     self:setPhysicsBody(physicsBody)
-    self:setPosition(position)
 end
 
 return BoxObject

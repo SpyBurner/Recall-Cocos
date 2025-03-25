@@ -27,12 +27,16 @@ function ControllableObject:ctor(maxHP, iframe, width, height, scale, speed, jum
     self.physicsBody:setDynamic(true)
     self.physicsBody:setRotationEnable(false)
     
-
-    self.physicsBody:setCategoryBitmask(CollisionLayers.PLAYER)
+    if isPlayer then
+        self.physicsBody:setCategoryBitmask(CollisionLayers.PLAYER)
+    else
+        self.physicsBody:setCategoryBitmask(CollisionLayers.ENEMY)
+    end
 
     self.physicsBody:setCollisionBitmask(
         CollisionLayers:collidesWith(  -- What the player PHYSICALLY collides with
-            CollisionLayers.WALL
+            CollisionLayers.WALL,
+            CollisionLayers.PUSHABLE
             -- CollisionLayers.SPIKE, 
             -- CollisionLayers.GATE
         )

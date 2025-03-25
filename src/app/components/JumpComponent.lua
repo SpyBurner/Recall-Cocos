@@ -97,7 +97,7 @@ function JumpComponent:onRayCastHit(data)
     --     data.start.y, data.contact.y, normal.x, normal.y, category))
 
     -- ✅ Only land if the normal is pointing upwards (prevents jumping against walls)
-    if bit.band(category, CollisionLayers.WALL) ~= 0 and math.abs(normal.y) > 0.5 then
+    if (bit.band(category, CollisionLayers.WALL) ~= 0 or bit.band(category, CollisionLayers.PUSHABLE) ~= 0) and math.abs(normal.y) > 0.5 then
         -- print("✅ Landed on ground!")
         self:land()
     end

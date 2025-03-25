@@ -66,7 +66,10 @@ function GameController:ctor()
     -- Mouse control
 
     -- Physic object
+    local physicObject = BoxObject:create(cc.size(8*5, 8*5))  -- ✅ Player-controlled
+    physicObject:setPosition(cc.p(500, display.cy))
 
+    self:addChild(physicObject)
     -- Physic object
 
 
