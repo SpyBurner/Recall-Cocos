@@ -3,26 +3,33 @@ local Ground = require("app.objects.Ground")
 local CameraFollow = require("app.components.CameraFollow")
 local Tilemap = require("app.objects.Tilemap")
 local AnimationComponent = require("app.components.AnimationComponent")
+local PlayerAnimationControl = require("app.components.player.PlayerAnimationControl")
 
 local GameController = class("GameController", cc.Node)
 
 function GameController:ctor(physicsWorld)
+    -- PLAYER
     local player = ControllableObject:create(8, 8, 5, 150, 600, true)  -- ✅ Player-controlled
     player:setPosition(cc.p(display.cx, display.cy + 100))
     
     -- Animation
     local animations = {
-        { name = "idle", path = "res/Sprites/Player/idle-sheet.png", frameTime = 0.2, loop = true },
-        { name = "run", path = "res/Sprites/Player/walk-sheet.png", frameTime = 0.1, loop = true },
-        { name = "jump", path = "res/Sprites/Player/jump-sheet.png", frameTime = 0.15, loop = false, callback = function()
+        { name = "idle", plist = "res/Sprites/Player/idle/Idle.plist", frameTime = 0.2, loop = true },
+        { name = "walk", plist = "res/Sprites/Player/walk/Walk.plist", frameTime = 0.1, loop = true },
+        { name = "jump", plist = "res/Sprites/Player/jump/Jump.plist", frameTime = 0.15, loop = false, callback = function()
             print("Jump animation finished!")
         end }
     }
     
-    local animComponent = AnimationComponent:create(self, animations, 5)
+    local animComponent = AnimationComponent:create(player, animations, 5)
     player:addComponent(animComponent)
 
     animComponent:play("idle")  -- ✅ Play idle animation by default
+
+    local playerAnimControl = PlayerAnimationControl:create(player)
+    player:addComponent(playerAnimControl)
+
+    -- PLAYER
 
     -- ✅ Attach CameraFollow component
     local cameraFollow = CameraFollow:create(player, nil, 100)  -- Follow with 100px deadzone

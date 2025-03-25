@@ -11,6 +11,16 @@ function GameObject:addComponent(component)
     table.insert(self.components, component)  -- ✅ Store component in a list
 end
 
+-- ✅ Retrieve a component by type
+function GameObject:getComponent(componentType)
+    for _, component in ipairs(self.components) do
+        if component.__cname == componentType then  -- ✅ Match by class name
+            return component
+        end
+    end
+    return nil  -- ✅ Return nil if not found
+end
+
 -- ✅ Update loop (called every frame)
 function GameObject:update(dt)
     for _, component in ipairs(self.components) do

@@ -60,6 +60,10 @@ function JumpComponent:update(dt)
     end
 end
 
+function JumpComponent:isJumping()
+    return not self.isOnGround
+end
+
 function JumpComponent:jump()
     -- print("isOnGround:", self.isOnGround)
     local body = self.owner:getPhysicsBody()

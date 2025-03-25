@@ -25,6 +25,14 @@ function MovementControl:ctor(owner, speed, playerControlled, wallDistance)
 
 end
 
+function MovementControl:getDirection()
+    return self.direction
+end
+
+function MovementControl:isMoving()
+    return math.abs(self.direction.x) > 0.1
+end
+
 function MovementControl:update(dt)
     if not self.isEnabled then return end
 

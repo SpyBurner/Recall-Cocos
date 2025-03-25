@@ -1,7 +1,7 @@
 local GameObject = require("app.core.GameObject")
 local Joystick = require("app.components.Joystick")
 local MovementControl = require("app.components.MovementControl")
-local JumpControl = require("app.components.JumpControl")
+local JumpComponent = require("app.components.JumpComponent")
 
 local CollisionLayers = require("app.core.CollisionLayers")
 
@@ -55,8 +55,8 @@ function ControllableObject:ctor(width, height, scale, speed, jumpStrength, isPl
     self:addComponent(self.movementControl)
 
     -- ✅ Attach jump component
-    self.jumpControl = JumpControl:create(self, jumpStrength)
-    self:addComponent(self.jumpControl)
+    self.jumpComponent = JumpComponent:create(self, jumpStrength)
+    self:addComponent(self.jumpComponent)
     
     -- -- ✅ Create visual representation
     -- self.sprite = cc.LayerColor:create(cc.c4b(0, 255, 0, 255), 50, 50)
