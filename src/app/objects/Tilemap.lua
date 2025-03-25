@@ -158,15 +158,7 @@ function Tilemap:setupDamageLayer(layerName, damage)
 
                 -- ✅ Add DamageOnContact component
                 local damageComponent = DamageOnContact:create(node, damage)
-                if damageComponent then
-                    node:addComponent(damageComponent)
-                else
-                    print("❌ Failed to create DamageOnContact at:", x, y)
-                end
-
-                -- node:setTag(1)  -- ✅ Mark as a damage tile
-
-
+                node:addComponent(damageComponent)
                 self:addChild(node)  -- ✅ Add to the tilemap node
             end
         end

@@ -3,10 +3,10 @@ local Component = require("app.core.Component")
 local DamageOnContact = class("DamageOnContact", Component)
 
 function DamageOnContact:ctor(owner, damageAmount)
-    Component.ctor(self, owner)  -- ✅ Call base class constructor
-    self.damage = damageAmount or 10  -- ✅ Default damage value
+    Component.ctor(self, owner)
+    self.damage = damageAmount or 10
+    self.isColliding = false  -- Track if collision is ongoing
 
-    -- ✅ Ensure the owner has a physics body
     local physicsBody = self.owner:getPhysicsBody()
     if not physicsBody then
         print("❌ DamageOnContact: Owner must have a physics body!")
@@ -15,35 +15,48 @@ function DamageOnContact:ctor(owner, damageAmount)
 
     -- ✅ Enable contact listener
     local function onContactBegin(contact)
-        self:handleContact(contact)
-        return true
+        return self:handleContactBegin(contact)
     end
+
+    local function onContactEnd(contact)
+        return self:handleContactEnd(contact)
+    end
+
     local eventListener = cc.EventListenerPhysicsContact:create()
     eventListener:registerScriptHandler(onContactBegin, cc.Handler.EVENT_PHYSICS_CONTACT_BEGIN)
+    eventListener:registerScriptHandler(onContactEnd, cc.Handler.EVENT_PHYSICS_CONTACT_SEPARATE)
 
     self.owner:getEventDispatcher():addEventListenerWithSceneGraphPriority(eventListener, self.owner)
 end
 
-function DamageOnContact:handleContact(contact)
-    print("💥 DamageOnContact: Collision detected!")
+function DamageOnContact:handleContactBegin(contact)
+    -- print("💥 DamageOnContact: Collision started!")
 
-    -- ✅ Get objects from collision
     local nodeA = contact:getShapeA():getBody():getNode()
     local nodeB = contact:getShapeB():getBody():getNode()
 
-    print("💥 DamageOnContact: Node A:", nodeA, "Node B:", nodeB)
+    if not nodeA or not nodeB then return false end
 
-    -- ✅ Ensure nodes are valid
-    if not nodeA or not nodeB then return end
-
-    -- ✅ Check which node is the owner, and find the other
     local other = (nodeA == self.owner) and nodeB or nodeA
+    self.target = other:getComponent("CoreStat")
 
-    -- ✅ Check if the other object has CoreStat
-    local coreStat = other:getComponent("CoreStat")
-    if coreStat then
-        print("💥 DamageOnContact: Dealing", self.damage, "damage to", other.__cname)
-        coreStat:TakeDamage(self.damage)
+    if self.target then
+        -- print("💥 DamageOnContact: Start dealing continuous damage to", other.__cname)
+        self.isColliding = true  -- Mark as in contact
+    end
+
+    return true
+end
+
+function DamageOnContact:handleContactEnd(contact)
+    -- print("🛑 DamageOnContact: Collision ended!")
+    self.isColliding = false  -- Stop applying damage
+    self.target = nil  -- Clear reference
+end
+
+function DamageOnContact:update(dt)
+    if self.isColliding and self.target then
+        self.target:TakeDamage(self.damage)
     end
 end
 

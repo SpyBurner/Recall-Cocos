@@ -6,7 +6,7 @@ local CoreStat = class("CoreStat", Component)
 function CoreStat:ctor(owner, maxHP, iframe)
     Component.ctor(self, owner)  -- ✅ Call base class constructor
     
-    self.maxHp = maxHP or 100  -- ✅ Default max HP
+    self.maxHp = maxHP or 3  -- ✅ Default max HP
     self.hp = self.maxHp  -- ✅ Current HP
     self.isDead = false  -- ✅ Flag to check if the object is dead
 
@@ -24,11 +24,11 @@ function CoreStat:GetHp()
 end
 
 function CoreStat:TakeDamage(damage)
-    print("TakeDamage triggerd at time: ", os.time())
+    -- print("TakeDamage triggerd at time: ", os.time())
     
     if self.isDead then return end  -- ✅ Don't take damage if already dead
     
-    if self.lastIframe + self.iframe > os.time() then
+    if os.time() - self.lastIframe < self.iframe then
         return  -- ✅ Ignore damage if in iframe
     end
     
@@ -37,7 +37,7 @@ function CoreStat:TakeDamage(damage)
     
     print("💥 CoreStat: Taking damage:", damage)
 
-    OnHpChangeEvent:Invoke(self.hp)  -- ✅ Invoke the HP change event
+    self.OnHpChangeEvent:Invoke(self.hp)  -- ✅ Invoke the HP change event
 
     if self.hp <= 0 then
         self.hp = 0

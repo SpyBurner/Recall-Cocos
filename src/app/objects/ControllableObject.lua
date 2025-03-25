@@ -14,7 +14,7 @@ function ControllableObject:ctor(maxHP, iframe, width, height, scale, speed, jum
     self.physicMaterial = cc.PhysicsMaterial(0, 0, 0)  -- ✅ Create a physic material
 
     self.maxHP = maxHP
-    self.iframe = iframe or 1  -- ✅ Default iframe duration
+    self.iframe = iframe  -- ✅ Default iframe duration
 
     self.width = width 
     self.height = height
@@ -32,9 +32,9 @@ function ControllableObject:ctor(maxHP, iframe, width, height, scale, speed, jum
 
     self.physicsBody:setCollisionBitmask(
         CollisionLayers:collidesWith(  -- What the player PHYSICALLY collides with
-            CollisionLayers.WALL, 
-            CollisionLayers.SPIKE, 
-            CollisionLayers.GATE
+            CollisionLayers.WALL
+            -- CollisionLayers.SPIKE, 
+            -- CollisionLayers.GATE
         )
     )
 
