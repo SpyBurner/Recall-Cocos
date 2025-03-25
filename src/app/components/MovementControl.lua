@@ -25,6 +25,10 @@ function MovementControl:ctor(owner, speed, playerControlled, wallDistance)
 
     self.stat = self.owner:getComponent("CoreStat")
 
+    self.stat.OnDeathEvent:AddListener(function()
+        self.isEnabled = false  -- ✅ Disable movement on death
+    end)
+
 end
 
 function MovementControl:getDirection()
@@ -38,11 +42,11 @@ end
 function MovementControl:update(dt)
     if not self.isEnabled then return end
 
-    if self.stat.isDead then return end  -- ✅ Don't update if dead
-
+    
     if self.joystick then
         self.direction = self.joystick:getDirection()
     end
+
 
     if math.abs(self.direction.x) > 0.1 then
         -- ✅ Check if there's a wall before applying force

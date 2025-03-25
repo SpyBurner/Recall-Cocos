@@ -29,6 +29,12 @@ function Joystick:ctor(owner, keyUp, keyDown, keyLeft, keyRight)
     end
 
     self.stat = owner:getComponent("CoreStat")
+
+    self.stat.OnDeathEvent:AddListener(function()
+        self.isEnabled = false
+        self.direction.x = 0
+        self.direction.y = 0
+    end)
 end
 
 function Joystick:getDirection()
@@ -38,12 +44,6 @@ end
 function Joystick:update(dt)
     -- print("Joystick update")
     if not self.isEnabled then return end 
-
-    if self.stat.isDead then
-        self.direction.x = 0
-        self.direction.y = 0
-        return
-    end
 
     if Input.isKeyPressed(self.keyUp) then
         self.direction.y = 1

@@ -5,7 +5,7 @@ local Tilemap = require("app.objects.Tilemap")
 local AnimationComponent = require("app.components.AnimationComponent")
 local PlayerAnimationControl = require("app.components.player.PlayerAnimationControl")
 local MouseTracker = require("app.components.control.MouseTracker")
-local GameObject = require("app.core.GameObject")  -- Import the base GameObject class
+local BaseObject = require("app.objects.BaseObject")  -- Import the base GameObject class
 
 
 local GameController = class("GameController", cc.Node)
@@ -18,7 +18,7 @@ function GameController:ctor()
 
     -- PLAYER
     local player = ControllableObject:create(3, 1, 8, 8, 5, 150, 600, true)  -- ✅ Player-controlled
-    player:setPosition(cc.p(display.cx, display.cy + 100))
+    player:setPosition(cc.p(100, display.cy))
 
     -- Animation
     local animations = {
@@ -48,16 +48,19 @@ function GameController:ctor()
 
     -- Mouse control
 
-    local controlHandlerObject = GameObject:create()
-    controlHandlerObject:setPosition(cc.p(display.cx, display.cy))
+    local controlHandlerObject = BaseObject:create()
+    -- controlHandlerObject:setPosition(0, 0)
 
-    local cursor = cc.LayerColor:create(cc.c4b(255, 0, 0, 255), 10, 10)
+    local cursor = cc.LayerColor:create(cc.c4b(0, 255, 0, 255), 50, 50)
+    cursor:setAnchorPoint(cc.p(0.5, 0.5))
     controlHandlerObject:addChild(cursor)
     cursor:setPosition(cc.p(0, 0))
 
-    -- local mouseTracker = MouseTracker:create(controlHandlerObject)
-    -- controlHandlerObject:addComponent(mouseTracker)
 
+    local mouseTracker = MouseTracker:create(controlHandlerObject, true)
+    controlHandlerObject:addComponent(mouseTracker)
+
+    self:addChild(controlHandlerObject)
     -- Mouse control
 
 end
