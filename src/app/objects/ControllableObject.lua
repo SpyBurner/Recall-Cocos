@@ -2,15 +2,19 @@ local GameObject = require("app.core.GameObject")
 local Joystick = require("app.components.Joystick")
 local MovementControl = require("app.components.MovementControl")
 local JumpComponent = require("app.components.JumpComponent")
+local CoreStat = require("app.components.stat.CoreStat")
 
 local CollisionLayers = require("app.core.CollisionLayers")
 
 local ControllableObject = class("ControllableObject", GameObject)
 
-function ControllableObject:ctor(width, height, scale, speed, jumpStrength, isPlayer)
+function ControllableObject:ctor(maxHP, iframe, width, height, scale, speed, jumpStrength, isPlayer)
     GameObject.ctor(self)  -- ✅ Call base constructor
 
     self.physicMaterial = cc.PhysicsMaterial(0, 0, 0)  -- ✅ Create a physic material
+
+    self.maxHP = maxHP
+    self.iframe = iframe or 1  -- ✅ Default iframe duration
 
     self.width = width 
     self.height = height
@@ -44,6 +48,9 @@ function ControllableObject:ctor(width, height, scale, speed, jumpStrength, isPl
     )
 
     self:setPhysicsBody(self.physicsBody)
+
+    self.playerStat = CoreStat:create(self, self.maxHP, self.iframe)  -- ✅ Create a CoreStat component for the player
+    self:addComponent(self.playerStat)
 
     if (isPlayer) then
         self.joystick = Joystick:create(self, cc.KeyCode.KEY_W, cc.KeyCode.KEY_S, cc.KeyCode.KEY_A, cc.KeyCode.KEY_D)

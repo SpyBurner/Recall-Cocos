@@ -23,6 +23,8 @@ function MovementControl:ctor(owner, speed, playerControlled, wallDistance)
 
     self.physicsBody = self.owner.physicsBody
 
+    self.stat = self.owner:getComponent("CoreStat")
+
 end
 
 function MovementControl:getDirection()
@@ -35,6 +37,8 @@ end
 
 function MovementControl:update(dt)
     if not self.isEnabled then return end
+
+    if self.stat.isDead then return end  -- ✅ Don't update if dead
 
     if self.joystick then
         self.direction = self.joystick:getDirection()

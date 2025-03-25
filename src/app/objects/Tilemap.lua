@@ -1,5 +1,6 @@
 local GameObject = require("app.core.GameObject")
 local CollisionLayers = require("app.core.CollisionLayers")
+local DamageOnContact = require("app.components.stat.DamageOnContact")
 
 local Tilemap = class("Tilemap", GameObject)
 
@@ -27,9 +28,14 @@ function Tilemap:ctor(mapFile, scale)
     self.mapSize = self.tilemap:getMapSize()
 
     -- ✅ Add physics collision layers (if applicable)
-    self:setupCollisionLayer("Collisions") -- Change layer name as needed
+    self:setupCollisionLayer("Collisions")
+
+    --! HARD CODE DAMAGE
+    self:setupDamageLayer("Damage", 1) 
 end
+
 function Tilemap:setupCollisionLayer(layerName)
+    print("Creating collision layer")
     local collisionLayer = self.tilemap:getLayer(layerName)
     if not collisionLayer then return end  -- ✅ Skip if no collision layer
 
@@ -47,20 +53,20 @@ function Tilemap:setupCollisionLayer(layerName)
         end
         return collisionLayer:getTileAt(cc.p(x, y)) ~= nil
     end
-
+    
     local function floodFill(x, y)
         if visited[x .. "," .. y] then return nil end  -- ✅ Already processed
         if not isTileSolid(x, y) then return nil end  -- ✅ Not a solid tile
-
+    
         -- ✅ Start flood fill at (x, y)
         local minX, minY = x, y
         local maxX, maxY = x, y
-
+    
         -- ✅ Expand horizontally
         while maxX + 1 < mapWidth and isTileSolid(maxX + 1, y) do
             maxX = maxX + 1
         end
-
+    
         -- ✅ Expand vertically while ensuring horizontal width is consistent
         local tempMaxY = y
         local validRow = true
@@ -76,22 +82,22 @@ function Tilemap:setupCollisionLayer(layerName)
             end
         end
         maxY = tempMaxY
-
+    
         -- ✅ Mark all tiles in this block as visited
         for i = minX, maxX do
             for j = minY, maxY do
                 visited[i .. "," .. j] = true
             end
         end
-
+    
         -- ✅ Compute collider size and center position
         local colliderWidth = (maxX - minX + 1) * tileSize.width
         local colliderHeight = (maxY - minY + 1) * tileSize.height
-
+    
         -- ✅ Flip Y-coordinate for correct positioning
         local centerX = minX * tileSize.width + colliderWidth / 2
         local centerY = (mapHeight - maxY - 1) * tileSize.height + colliderHeight / 2  -- ✅ FIXED
-
+    
         return colliderWidth, colliderHeight, centerX, centerY
     end
 
@@ -115,6 +121,52 @@ function Tilemap:setupCollisionLayer(layerName)
         end
     end
 end
+
+function Tilemap:setupDamageLayer(layerName, damage)
+    print("Creating damage layer")
+    local damageLayer = self.tilemap:getLayer(layerName)
+    if not damageLayer then 
+        print("❌ No damage layer found")
+        return 
+    end  -- ✅ Exit if no damage layer
+
+    local mapWidth = self.mapSize.width
+    local mapHeight = self.mapSize.height
+    local tileSize = self.tileSize
+    tileSize = cc.size(tileSize.width * self.scale, tileSize.height * self.scale)
+
+    for x = 0, mapWidth - 1 do
+        for y = 0, mapHeight - 1 do
+            local tile = damageLayer:getTileAt(cc.p(x, y))
+            if tile then
+                -- ✅ Create a physics body for the damage tile
+                local body = cc.PhysicsBody:createBox(tileSize)
+                body:setDynamic(false)  -- ✅ Static body (doesn't move)
+                body:setCategoryBitmask(CollisionLayers.SPIKE)  
+                body:setCollisionBitmask(0)  -- ❌ No physical collision (pass-through)
+                body:setContactTestBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER))                  
+
+                local node = GameObject:create()
+                
+                -- ✅ Flip Y-coordinate for correct positioning
+                local flippedY = (mapHeight - y - 1) * tileSize.height
+
+                node:setPosition((x + 0.5) * tileSize.width, flippedY + (0.5 * tileSize.height))  -- ✅ Centered position
+                node:setPhysicsBody(body)
+                self:addChild(node)
+
+                -- ✅ Add DamageOnContact component
+                local damageComponent = DamageOnContact:create(node, damage)
+                if damageComponent then
+                    node:addComponent(damageComponent)
+                else
+                    print("❌ Failed to create DamageOnContact at:", x, y)
+                end
+            end
+        end
+    end
+end
+
 
 
 

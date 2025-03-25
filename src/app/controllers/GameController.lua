@@ -8,10 +8,15 @@ local PlayerAnimationControl = require("app.components.player.PlayerAnimationCon
 local GameController = class("GameController", cc.Node)
 
 function GameController:ctor(physicsWorld)
-    -- PLAYER
-    local player = ControllableObject:create(8, 8, 5, 150, 600, true)  -- ✅ Player-controlled
-    player:setPosition(cc.p(display.cx, display.cy + 100))
     
+    local map = Tilemap:create("res/maps/simple_map.tmx", 5)  -- Load your TMX file
+    map:setPosition(cc.p(0, 0))
+    self:addChild(map)
+
+    -- PLAYER
+    local player = ControllableObject:create(3, 1, 8, 8, 5, 150, 600, true)  -- ✅ Player-controlled
+    player:setPosition(cc.p(display.cx, display.cy + 100))
+
     -- Animation
     local animations = {
         { name = "idle", plist = "res/Sprites/Player/idle/Idle.plist", frameTime = 0.2, loop = true },
@@ -29,6 +34,7 @@ function GameController:ctor(physicsWorld)
     local playerAnimControl = PlayerAnimationControl:create(player)
     player:addComponent(playerAnimControl)
 
+
     -- PLAYER
 
     -- ✅ Attach CameraFollow component
@@ -37,33 +43,12 @@ function GameController:ctor(physicsWorld)
     
     self:addChild(player)
 
-    -- local ground1 = Ground:create(50, display.height)
-    -- ground1:setPosition(cc.p(display.cx, 50))
-    -- self:addChild(ground1)
-
-    local ground2 = Ground:create(500, 20)
-    ground2:setPosition(cc.p(display.cx, 50))
-    self:addChild(ground2)
-
-    -- local ground3 = Ground:create(200, 20)
-    -- ground3:setPosition(cc.p(display.cx + 300, 100))
-    -- self:addChild(ground3)
-
-    -- local ground4 = Ground:create(200, 20)
-    -- ground4:setPosition(cc.p(display.cx + 600, 200))
-    -- self:addChild(ground4)
-
-    local map = Tilemap:create("res/maps/simple_map.tmx", 5)  -- Load your TMX file
-    map:setPosition(cc.p(0, 0))
-    self:addChild(map)
-
-    -- local sprite = cc.Sprite:create("res/HelloWorld.png")
-    -- sprite:setPosition(cc.p(display.cx, display.cy))
-    -- self:addChild(sprite)
+    -- local ground2 = Ground:create(500, 20)
+    -- ground2:setPosition(cc.p(display.cx, 50))
+    -- self:addChild(ground2)
 
 
 
-    -- ✅ Enable update loop (Only needed if GameController has its own logic)
 end
 
 function GameController:update(dt)

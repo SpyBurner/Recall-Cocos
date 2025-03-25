@@ -2,7 +2,8 @@ local GameView = class("GameView", cc.load("mvc").ViewBase)
 
 function GameView:onCreate()
     -- ✅ Add background (light gray)
-    local bgColor = cc.LayerColor:create(cc.c4b(200, 200, 200, 255))
+    local bgColor = cc.LayerColor:create(cc.c4b(255, 204, 170, 255), 10000, 1000)
+    bgColor:setPosition(0, 0)  -- ✅ Set position to (0, 0)
     self:addChild(bgColor)
 
     -- ✅ Add UI label for controls
