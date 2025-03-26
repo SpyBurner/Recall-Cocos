@@ -1,0 +1,51 @@
+local GameObject = require("app.core.GameObject")
+
+local SpriteGameObject = class("SpriteGameObject", GameObject)
+
+function SpriteGameObject:ctor(spritePath, initialCounter, scale)
+    GameObject.ctor(self)
+
+
+    self.scale = scale or 5  -- Default scale is 1
+    -- ✅ Load sprite
+    self.sprite = cc.Sprite:create(spritePath)
+    if self.sprite then
+        self.sprite:setScale(self.scale)  -- Set the scale of the sprite
+        local texture = self.sprite:getTexture()
+        texture:setAliasTexParameters()
+
+        self:addChild(self.sprite)
+    else
+        print("❌ Failed to load sprite:", spritePath)
+    end
+
+    -- ✅ Initialize counter
+    self.counter = initialCounter or 0
+
+    -- ✅ Create a label to display the counter
+    self.counterLabel = cc.Label:createWithSystemFont("x " .. self.counter, "Arial", 24)
+    if self.counterLabel then
+        self.counterLabel:setAnchorPoint(cc.p(0, 0.5))  -- Align text to the right of the sprite
+        self:addChild(self.counterLabel)
+    end
+
+    -- ✅ Arrange layout
+    self:updateLayout()
+end
+
+-- ✅ Update the label position based on the sprite size
+function SpriteGameObject:updateLayout()
+    if self.sprite and self.counterLabel then
+        local spriteSize = self.sprite:getContentSize()
+        self.counterLabel:setPosition(spriteSize.width + 10, spriteSize.height / 2)  -- Place text to the right of the sprite
+    end
+end
+
+-- ✅ Increment the counter and update the label
+function SpriteGameObject:incrementCounter(amount)
+    self.counter = self.counter + (amount or 1)
+    self.counterLabel:setString("x " .. self.counter)  -- ✅ Update text
+    print("🔢 Counter updated:", self.counter)
+end
+
+return SpriteGameObject

@@ -112,7 +112,7 @@ function Tilemap:setupCollisionLayer(layerName)
                 local body = cc.PhysicsBody:createBox(cc.size(width, height))
                 body:setDynamic(false)  -- ✅ Static solid tiles
                 body:setCategoryBitmask(CollisionLayers.WALL)
-                body:setCollisionBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.ENEMY, CollisionLayers.PROJECTILE, CollisionLayers.PUSHABLE))
+                body:setCollisionBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.ENEMY, CollisionLayers.PROJECTILE, CollisionLayers.PUSHABLE, CollisionLayers.POWERUP))
                 body:setContactTestBitmask(0)
 
                 local node = cc.Node:create()

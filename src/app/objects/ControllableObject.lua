@@ -48,7 +48,8 @@ function ControllableObject:ctor(maxHP, iframe, width, height, scale, speed, jum
         CollisionLayers.WALL, 
         CollisionLayers.PUSHABLE, 
         CollisionLayers.SPIKE, 
-        CollisionLayers.GATE
+        CollisionLayers.GATE,
+        CollisionLayers.POWERUP
     )
     if isPlayer then
         collisionMask = CollisionLayers:collidesWith(collisionMask, CollisionLayers.ENEMY)

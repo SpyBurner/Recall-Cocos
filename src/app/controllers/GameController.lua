@@ -13,7 +13,13 @@ local Box16 = require("app.objects.BoxCollection.Box16")  -- Import the BoxObjec
 local Box28 = require("app.objects.BoxCollection.Box28")  -- Import the BoxObject class
 local Box32 = require("app.objects.BoxCollection.Box32")  -- Import the BoxObject class
 
+
 local Blob = require("app.objects.Enemy.Blob")
+
+local Heart = require("app.objects.PowerUp.Heart")  -- Import the Heart class
+
+local SpriteGameObject = require("app.objects.UI.SpriteGameObject")
+local StayAtPosition = require("app.components.ui.StayAtPosition")
 
 local GameController = class("GameController", cc.Node)
 
@@ -27,7 +33,7 @@ function GameController:ctor()
     map:addComponent(reload)  -- Add the reload component to the map
 
     -- PLAYER
-    local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
+    local player = ControllableObject:create(3, 1, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
     
     player:setPosition(map:tileToWorldCoord(cc.p(12,41)))
     player:setLocalZOrder(10)  -- ✅ Set Z-order to ensure player is on top of the map
@@ -61,24 +67,6 @@ function GameController:ctor()
     player:addComponent(cameraFollow)
     
     self:addChild(player)
-
-    -- Mouse control
-
-    -- local controlHandlerObject = BaseObject:create()
-    -- controlHandlerObject:setAnchorPoint(cc.p(0.5, 0.5))
-    -- -- controlHandlerObject:setPosition(0, 0)
-
-    -- local cursor = cc.LayerColor:create(cc.c4b(0, 255, 0, 255), 50, 50)
-    -- -- cursor:setAnchorPoint(cc.p(0.5, 0.5))
-    -- controlHandlerObject:addChild(cursor)
-    -- cursor:setPosition(cc.p(-25, -25))
-
-
-    -- local mouseTracker = MouseTracker:create(controlHandlerObject, true)
-    -- controlHandlerObject:addComponent(mouseTracker)
-
-    -- self:addChild(controlHandlerObject)
-    -- Mouse control
 
     -- Physic object
     local oneByOne = Box8:create()
@@ -128,11 +116,11 @@ function GameController:ctor()
     self:addChild(blob3)
 
     local blob4 = Blob:create(player)  -- Pass the player as the target
-    blob4:setPosition(map:tileToWorldCoord(cc.p(61, 42)))
+    blob4:setPosition(map:tileToWorldCoord(cc.p(60, 42)))
     self:addChild(blob4)
 
     local blob5 = Blob:create(player)  -- Pass the player as the target
-    blob5:setPosition(map:tileToWorldCoord(cc.p(64, 42)))
+    blob5:setPosition(map:tileToWorldCoord(cc.p(62, 42)))
     self:addChild(blob5)
 
     local blob6 = Blob:create(player)  -- Pass the player as the target
@@ -144,6 +132,42 @@ function GameController:ctor()
     self:addChild(blob7)
     -- Enemy
 
+    -- PowerUp
+
+    -- Heart
+    -- ✅ List of tile coordinates for hearts
+    local heartPositions = {
+        cc.p(19, 24),
+        cc.p(26, 42),
+        cc.p(65, 27),
+        cc.p(77, 22),
+        cc.p(39, 30),
+        cc.p(112, 17),
+        cc.p(91, 26)
+    }
+
+    -- ✅ Spawn hearts at each position
+    for _, tilePos in ipairs(heartPositions) do
+        local heart = Heart.new("res/Sprites/Powerup/heart.png")  -- ✅ Create heart object
+        heart:setPosition(map:tileToWorldCoord(tilePos))  -- ✅ Convert tile position to world position
+        self:addChild(heart)  -- ✅ Add to the scene
+    end
+
+
+    -- PowerUp
+
+    -- ✅ Create a game object with a sprite and counter
+    local coinDisplay = SpriteGameObject.new("res/Sprites/Powerup/coin.png", 5)
+
+    -- ✅ Attach the position-locking component
+    local stayComponent = StayAtPosition.new(coinDisplay, cc.p(300, 500))
+    coinDisplay:addComponent(stayComponent)
+
+    -- ✅ Add to scene
+    self:addChild(coinDisplay)
+
+    -- ✅ Example: Increment counter when a coin is collected
+    coinDisplay:incrementCounter(1)
 
 end
 

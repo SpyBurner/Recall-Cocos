@@ -23,6 +23,16 @@ function CoreStat:GetHp()
     return self.hp
 end
 
+function CoreStat:Heal()
+    if self.isDead then return end  -- ✅ Don't heal if already dead
+    if self.hp >= self.maxHp then return end  -- ✅ Don't heal if already at max HP
+
+    self.hp = math.min(self.hp + 1, self.maxHp)  -- ✅ Heal by 1, but not exceeding max HP
+    print("❤️ CoreStat: ", self.owner:getName()," healed to HP:", self.hp)
+
+    self.OnHpChangeEvent:Invoke(self.hp)  -- ✅ Invoke the HP change event
+end
+
 function CoreStat:TakeDamage(damage)
     -- print("TakeDamage triggerd at time: ", os.time())
     
