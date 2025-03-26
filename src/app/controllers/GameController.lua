@@ -10,6 +10,8 @@ local ReloadGame = require("app.components.control.ReloadLevel")  -- Import the 
 
 local Box8 = require("app.objects.BoxCollection.Box8")  -- Import the BoxObject class
 local Box16 = require("app.objects.BoxCollection.Box16")  -- Import the BoxObject class
+local Box28 = require("app.objects.BoxCollection.Box28")  -- Import the BoxObject class
+local Box32 = require("app.objects.BoxCollection.Box32")  -- Import the BoxObject class
 
 local Blob = require("app.objects.Enemy.Blob")
 
@@ -25,9 +27,18 @@ function GameController:ctor()
     map:addComponent(reload)  -- Add the reload component to the map
 
     -- PLAYER
-    local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 600, true, "Player")  -- ✅ Player-controlled
-    player:setPosition(cc.p(100, display.cy))
+    local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
+    
+    player:setPosition(map:tileToWorldCoord(cc.p(12,31)))
     player:setLocalZOrder(10)  -- ✅ Set Z-order to ensure player is on top of the map
+
+    local threeByThree_temp = Box28:create()
+    threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(22, 31)))
+    self:addChild(threeByThree_temp)
+
+    local bigBox_temp = Box32:create()
+    bigBox_temp:setPosition(map:tileToWorldCoord(cc.p(32, 31)))
+    self:addChild(bigBox_temp)
 
     -- Animation
     local animations = {
@@ -74,22 +85,44 @@ function GameController:ctor()
     -- Mouse control
 
     -- Physic object
-    local physicObject = Box16:create()
-    physicObject:setPosition(cc.p(300, display.cy + 500))
+    local oneByOne = Box8:create()
+    oneByOne:setPosition(map:tileToWorldCoord(cc.p(10, 13)))
+    self:addChild(oneByOne)
 
-    self:addChild(physicObject)
+    local oneByOne1 = Box8:create()
+    oneByOne1:setPosition(map:tileToWorldCoord(cc.p(13, 13)))
+    self:addChild(oneByOne1)
 
-    local physicObject2 = Box8:create()
-    physicObject2:setPosition(cc.p(800, display.cy + 400))
-    
-    self:addChild(physicObject2)
-    -- Physic object
+    local twoByTwo = Box16:create()
+    twoByTwo:setPosition(map:tileToWorldCoord(cc.p(18, 20)))
+    self:addChild(twoByTwo)
+
+    local twoByTwo2 = Box16:create()
+    twoByTwo2:setPosition(map:tileToWorldCoord(cc.p(67, 18)))
+    self:addChild(twoByTwo2)
+
+    local twoByTwo3 = Box16:create()
+    twoByTwo3:setPosition(map:tileToWorldCoord(cc.p(78, 12)))
+    self:addChild(twoByTwo3)
+
+    local twoByTwo4 = Box16:create()
+    twoByTwo4:setPosition(map:tileToWorldCoord(cc.p(82, 25)))
+    self:addChild(twoByTwo4)
+
+    local threeByThree = Box28:create()
+    threeByThree:setPosition(map:tileToWorldCoord(cc.p(39, 16)))
+    self:addChild(threeByThree)
+
+    local bigBox = Box32:create()
+    bigBox:setPosition(map:tileToWorldCoord(cc.p(114, 6)))
+    self:addChild(bigBox)
+
 
     -- Enemy
-    local blob1 = Blob:create(player)  -- Pass the player as the target
-    blob1:setPosition(cc.p(350, display.cy + 200))
+    -- local blob1 = Blob:create(player)  -- Pass the player as the target
+    -- blob1:setPosition(cc.p(350, display.cy + 200))
 
-    self:addChild(blob1)
+    -- self:addChild(blob1)
     -- Enemy
 
 

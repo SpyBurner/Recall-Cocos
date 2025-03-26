@@ -164,14 +164,17 @@ function Tilemap:setupDamageLayer(layerName, damage)
         end
     end
 end
-
--- ✅ Convert world position to tile coordinate
+-- ✅ Convert world position to tile coordinate (scaled)
 function Tilemap:worldToTileCoord(worldPos)
     local tileSize = self.tileSize
     local mapHeight = self.mapSize.height
 
-    local x = math.floor(worldPos.x / tileSize.width)
-    local y = math.floor((worldPos.y / tileSize.height))
+    -- ✅ Adjust for scale
+    local scaledTileWidth = tileSize.width * self.scale
+    local scaledTileHeight = tileSize.height * self.scale
+
+    local x = math.floor(worldPos.x / scaledTileWidth)
+    local y = math.floor(worldPos.y / scaledTileHeight)
 
     -- ✅ Flip Y-axis to match TMX coordinate system
     y = mapHeight - y - 1
@@ -179,16 +182,21 @@ function Tilemap:worldToTileCoord(worldPos)
     return cc.p(x, y)
 end
 
--- ✅ Convert tile coordinate to world position (center of tile)
+-- ✅ Convert tile coordinate to world position (center of tile) with scaling
 function Tilemap:tileToWorldCoord(tilePos)
     local tileSize = self.tileSize
     local mapHeight = self.mapSize.height
 
-    local x = (tilePos.x + 0.5) * tileSize.width
-    local y = (mapHeight - tilePos.y - 0.5) * tileSize.height  -- ✅ Flip Y-axis for TMX
+    -- ✅ Adjust for scale
+    local scaledTileWidth = tileSize.width * self.scale
+    local scaledTileHeight = tileSize.height * self.scale
+
+    local x = (tilePos.x + 0.5) * scaledTileWidth
+    local y = (mapHeight - tilePos.y - 0.5) * scaledTileHeight  -- ✅ Flip Y-axis for TMX
 
     return cc.p(x, y)
 end
+
 
 
 
