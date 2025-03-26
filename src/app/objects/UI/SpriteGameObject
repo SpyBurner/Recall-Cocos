@@ -48,4 +48,10 @@ function SpriteGameObject:incrementCounter(amount)
     print("🔢 Counter updated:", self.counter)
 end
 
+function SpriteGameObject:setCounter(value)
+    self.counter = value or 0
+    self.counterLabel:setString("x " .. self.counter)  -- ✅ Update text
+    print("🔢 Counter updated:", self.counter)
+end
+
 return SpriteGameObject

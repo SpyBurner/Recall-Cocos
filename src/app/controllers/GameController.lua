@@ -17,6 +17,9 @@ local Box32 = require("app.objects.BoxCollection.Box32")  -- Import the BoxObjec
 local Blob = require("app.objects.Enemy.Blob")
 
 local Heart = require("app.objects.PowerUp.Heart")  -- Import the Heart class
+local Spring = require("app.objects.PowerUp.Spring")  -- Import the Spring class
+local KeyEvent = require("app.components.control.KeyEvent")  -- Import the KeyEvent component
+local Coin = require("app.objects.PowerUp.Coin")  -- Import the Coin class
 
 local SpriteGameObject = require("app.objects.UI.SpriteGameObject")
 local StayAtPosition = require("app.components.ui.StayAtPosition")
@@ -34,13 +37,44 @@ function GameController:ctor()
 
     -- PLAYER
     local player = ControllableObject:create(3, 1, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
+
+    player:setPosition(map:tileToWorldCoord(cc.p(12, 41)))
+    player:setLocalZOrder(10)  -- ✅ Ensure player is on top of the map
     
-    player:setPosition(map:tileToWorldCoord(cc.p(12,41)))
-    player:setLocalZOrder(10)  -- ✅ Set Z-order to ensure player is on top of the map
+    local defaultBounciness = 0  -- ✅ Normal restitution
+    local boostedBounciness = 2.3  -- ✅ Boosted bounciness
+    
+    local springAbility = KeyEvent:create(player, cc.KeyCode.KEY_S,
+        function()  -- ✅ On Pressed
+            local body = player:getPhysicsBody():getFirstShape()
+            if body then
+                print("🔼 Increasing Bounciness!")
+                body:setRestitution(boostedBounciness)  -- ✅ Set high bounce
+            else
+                print("❌ No physics body found on player!")
+            end
+        end,
+        function()  -- ✅ On Released
+            local body = player:getPhysicsBody():getFirstShape()
+            if body then
+                print("🔽 Resetting Bounciness!")
+                body:setRestitution(defaultBounciness)  -- ✅ Reset to normal bounce
+            end
+        end
+    )
+    
+    springAbility.isEnabled = false
+    player:addComponent(springAbility)
+    
 
     local threeByThree_temp = Box8:create()
     threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(22, 41)))
     self:addChild(threeByThree_temp)
+
+    local springtest = Spring:create("res/Sprites/Powerup/spring.png")  -- ✅ Create spring object
+    springtest:setPosition(map:tileToWorldCoord(cc.p(15, 41)))  -- ✅ Set position
+
+    self:addChild(springtest)  -- ✅ Add to the scene
 
     -- Animation
     local animations = {
@@ -98,7 +132,7 @@ function GameController:ctor()
     self:addChild(threeByThree)
 
     local bigBox = Box32:create()
-    bigBox:setPosition(map:tileToWorldCoord(cc.p(114, 6)))
+    bigBox:setPosition(map:tileToWorldCoord(cc.p(114, 16)))
     self:addChild(bigBox)
 
 
@@ -153,11 +187,50 @@ function GameController:ctor()
         self:addChild(heart)  -- ✅ Add to the scene
     end
 
+    local spring = Spring:create("res/Sprites/Powerup/spring.png")  -- ✅ Create spring object
+    spring:setPosition(map:tileToWorldCoord(cc.p(88, 34)))  -- ✅ Set position
+
+    self:addChild(spring)  -- ✅ Add to the scene
+
+    -- ✅ List of specific tile positions for coins
+    local coinPositions = {
+        cc.p(14, 39), cc.p(15, 39), cc.p(17, 39), cc.p(18, 39), cc.p(20, 39), cc.p(21, 39),
+        cc.p(39, 39), cc.p(40, 39), cc.p(41, 39), cc.p(42, 39), cc.p(43, 39),
+        cc.p(54, 35), cc.p(55, 35),
+        cc.p(51, 32), cc.p(52, 32),
+        cc.p(48, 29), cc.p(49, 29),
+        cc.p(51, 26), cc.p(52, 26),
+        cc.p(35, 23), cc.p(36, 23), cc.p(37, 23),
+        cc.p(10, 25), cc.p(10, 26),
+        cc.p(14, 22), cc.p(14, 21), cc.p(15, 21), cc.p(16, 21),
+        cc.p(13, 21), cc.p(12, 21), cc.p(11, 21), cc.p(11, 22)
+    }
+
+    -- ✅ Generate coins for ranges
+    local function addRangeCoins(xStart, xEnd, yStart, yEnd)
+        for x = xStart, xEnd do
+            for y = yStart, yEnd do
+                table.insert(coinPositions, cc.p(x, y))
+            end
+        end
+    end
+
+    -- ✅ Add range-based coins
+    addRangeCoins(57, 64, 21, 21)   -- (57->64, 21)
+    addRangeCoins(87, 91, 23, 23)   -- (87->91, 23)
+    addRangeCoins(108, 109, 16, 42) -- (108->109, 16->42)
+
+    -- ✅ Spawn coins at each position
+    for _, tilePos in ipairs(coinPositions) do
+        local coin = Coin:create("res/Sprites/Powerup/coin.png", 5, 1)  -- ✅ Create coin object
+        coin:setPosition(map:tileToWorldCoord(tilePos))  -- ✅ Convert tile position to world position
+        self:addChild(coin)  -- ✅ Add to the scene
+    end
 
     -- PowerUp
 
     -- ✅ Create a game object with a sprite and counter
-    local coinDisplay = SpriteGameObject:create("res/Sprites/Powerup/coin.png", 5)
+    local coinDisplay = SpriteGameObject:create("res/Sprites/Powerup/coin.png", 0)
 
     -- ✅ Attach the position-locking component
     local stayComponent = StayAtPosition:create(coinDisplay, cc.p(300, 500))
@@ -166,9 +239,25 @@ function GameController:ctor()
     -- ✅ Add to scene
     self:addChild(coinDisplay)
 
-    -- ✅ Example: Increment counter when a coin is collected
-    coinDisplay:incrementCounter(1)
+    local playerStat = player:getComponent("CoreStat")
+    playerStat.OnCoinsChangeEvent:AddListener(function(coins)
+        coinDisplay:setCounter(coins)  -- ✅ Update the counter on coin collection
+    end)
 
+    -- ✅ Create a game object with a sprite and counter for HP
+    local heartDisplay = SpriteGameObject:create("res/Sprites/Powerup/heart.png", 3)
+
+    -- ✅ Attach the position-locking component
+    local heartStayComponent = StayAtPosition:create(heartDisplay, cc.p(100, 500))
+    heartDisplay:addComponent(heartStayComponent)
+
+    -- ✅ Add to scene
+    self:addChild(heartDisplay)
+
+    -- ✅ Update the counter on heart collection
+    playerStat.OnHpChangeEvent:AddListener(function(hearts)
+        heartDisplay:setCounter(hearts)
+    end)
 end
 
 function GameController:update(dt)

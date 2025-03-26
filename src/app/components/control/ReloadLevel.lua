@@ -29,7 +29,7 @@ function ReloadGame:onKeyPressed(keyCode, event)
     end
 
     local sceneName = cc.Director:getInstance():getRunningScene().__cname
-    print("Currently in scene:", sceneName)
+    -- print("Currently in scene:", sceneName)
 
     if keyCode == cc.KeyCode.KEY_ESCAPE then
         if (sceneName == "GameScene") then

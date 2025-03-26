@@ -13,10 +13,13 @@ function CoreStat:ctor(owner, maxHP, iframe)
     self.iframe = iframe or 1  -- ✅ Default iframe duration
     self.lastIframe = 0  -- ✅ Last iframe time
 
+    self.coins = 0
 
     self.OnDeathEvent = Event:create()  -- ✅ Create a death event
 
     self.OnHpChangeEvent = Event:create()  -- ✅ Create an HP change event
+
+    self.OnCoinsChangeEvent = Event:create()  -- ✅ Create a coins change event
 end
 
 function CoreStat:GetHp()
@@ -65,6 +68,15 @@ function CoreStat:Die(theDeathObject)
 
     -- ✅ Invoke the event, triggering all registered listeners
     self.OnDeathEvent:Invoke(self.owner)
+end
+
+function CoreStat:AddCoins(value)
+    if self.isDead then return end  -- ✅ Don't pick up coins if dead
+
+    self.coins = self.coins + value  -- ✅ Increment coin count
+    print("💰 CoreStat: ", self.owner:getName()," picked up a coin! Total coins:", self.coins)
+
+    self.OnCoinsChangeEvent:Invoke(self.coins)  -- ✅ Invoke the coins change event
 end
 
 function CoreStat:update(dt)
