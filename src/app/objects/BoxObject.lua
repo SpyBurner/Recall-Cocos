@@ -12,7 +12,7 @@ function BoxObject:ctor(size, density, restitution, friction, spritePath)
     restitution = restitution or 0  -- Default bounciness (0 = no bounce)
     friction = friction or 0.5  -- Default friction
 
-    size = cc.size(size.width - 5, size.height - 5)  -- Ensure size is a cc.size object
+    size = cc.size(size.width - 4, size.height)  -- Ensure size is a cc.size object
 
     -- ✅ Create physics material
     local material = cc.PhysicsMaterial(density, restitution, friction)

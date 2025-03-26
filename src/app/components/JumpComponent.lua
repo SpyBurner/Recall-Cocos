@@ -51,7 +51,8 @@ function JumpComponent:update(dt)
     local physicsWorld = cc.Director:getInstance():getRunningScene():getPhysicsWorld()
 
     local playerWidth = 50
-    local offsets = {-playerWidth / 3, 0, playerWidth / 3}  -- ✅ Cast from Left, Center, Right
+    -- local offsets = {-playerWidth / 3, 0, playerWidth / 3}  -- ✅ Cast from Left, Center, Right
+    local offsets = {0}
 
     local rayStep = 5  -- ✅ Distance between ray start heights
     local totalChecks = math.floor(self.rayCastHeight / rayStep)  -- ✅ Number of rays to cast
