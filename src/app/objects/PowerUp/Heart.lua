@@ -31,7 +31,7 @@ function Heart:ctor(spritePath, scale)
 
     -- ✅ Collision settings
     physicsBody:setCategoryBitmask(CollisionLayers.POWERUP)  -- ✅ Heart belongs to POWERUP layer
-    physicsBody:setCollisionBitmask(bit.bor(CollisionLayers.WALL, CollisionLayers.POWERUP))  -- ✅ Can collide with walls but still remains a POWERUP
+    physicsBody:setCollisionBitmask(CollisionLayers.WALL)  -- ✅ Can collide with walls but still remains a POWERUP
     physicsBody:setContactTestBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER))  -- ✅ Detect collisions with player
 
     self:setPhysicsBody(physicsBody)
@@ -49,7 +49,7 @@ function Heart:ctor(spritePath, scale)
     end
 
     -- ✅ Add CallBackOnContact component (only reacts to player)
-    local contactComponent = CallBackOnContact.new(self, onPickup, nil, true)
+    local contactComponent = CallBackOnContact:create(self, onPickup, nil, true)
     self:addComponent(contactComponent)
 end
 

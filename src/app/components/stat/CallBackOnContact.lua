@@ -17,13 +17,16 @@ function CallBackOnContact:ctor(owner, onBegin, onEnd, destroyOnContact)
         return
     end
 
-    -- ✅ Create a contact listener
-    local eventListener = cc.EventListenerPhysicsContact:create()
-    eventListener:registerScriptHandler(handler(self, self.handleContactBegin), cc.Handler.EVENT_PHYSICS_CONTACT_BEGIN)
-    eventListener:registerScriptHandler(handler(self, self.handleContactEnd), cc.Handler.EVENT_PHYSICS_CONTACT_SEPARATE)
+    -- ✅ Create separate contact listeners for begin and end events
+    local eventListenerBegin = cc.EventListenerPhysicsContact:create()
+    eventListenerBegin:registerScriptHandler(handler(self, self.handleContactBegin), cc.Handler.EVENT_PHYSICS_CONTACT_BEGIN)
+
+    local eventListenerEnd = cc.EventListenerPhysicsContact:create()
+    eventListenerEnd:registerScriptHandler(handler(self, self.handleContactEnd), cc.Handler.EVENT_PHYSICS_CONTACT_SEPARATE)
 
     -- ✅ Use fixed priority to ensure events fire properly
-    cc.Director:getInstance():getEventDispatcher():addEventListenerWithFixedPriority(eventListener, 1)
+    cc.Director:getInstance():getEventDispatcher():addEventListenerWithFixedPriority(eventListenerBegin, 1)
+    cc.Director:getInstance():getEventDispatcher():addEventListenerWithFixedPriority(eventListenerEnd, 2)
 end
 
 function CallBackOnContact:handleContactBegin(contact)
@@ -37,16 +40,16 @@ function CallBackOnContact:handleContactBegin(contact)
 
     if not nodeA or not nodeB then return false end
 
-    -- ✅ Ensure `self.owner` is part of the contact
+    -- ✅ Ensure `self.owner` (power-up) is part of the contact
     if nodeA ~= self.owner and nodeB ~= self.owner then return false end  
 
-    -- ✅ Identify the object that is NOT the owner
+    -- ✅ Identify the object that is NOT the owner (i.e., the player)
     local other = (nodeA == self.owner) and nodeB or nodeA
 
-    -- ✅ Filter for POWERUP objects
+    -- ✅ Check if the other object is a player
     local category = other:getPhysicsBody():getCategoryBitmask()
-    if bit.band(category, CollisionLayers.POWERUP) == 0 then 
-        return false  -- ❌ Ignore if it's not a powerup
+    if bit.band(category, CollisionLayers.PLAYER) == 0 then 
+        return false  -- ❌ Ignore if it's not a player
     end
 
     -- ✅ Trigger the callback function if it exists
@@ -55,10 +58,10 @@ function CallBackOnContact:handleContactBegin(contact)
         self.onBegin(other)
     end
 
-    -- ✅ Destroy power-up if flag is enabled
+    -- ✅ Destroy **self.owner** (the power-up), NOT the player
     if self.destroyOnContact then
-        print("🗑️ Destroying power-up:", other.__cname)
-        other:removeFromParent(true)
+        print("🗑️ Destroying power-up:", self.owner.__cname)
+        self.owner:removeFromParent(true)
     end
 
     return true
@@ -77,13 +80,13 @@ function CallBackOnContact:handleContactEnd(contact)
 
     if nodeA ~= self.owner and nodeB ~= self.owner then return end  
 
-    -- ✅ Identify the other object
+    -- ✅ Identify the other object (the player)
     local other = (nodeA == self.owner) and nodeB or nodeA
 
-    -- ✅ Filter for POWERUP objects
+    -- ✅ Check if the other object is a player
     local category = other:getPhysicsBody():getCategoryBitmask()
-    if bit.band(category, CollisionLayers.POWERUP) == 0 then 
-        return  -- ❌ Ignore if it's not a powerup
+    if bit.band(category, CollisionLayers.PLAYER) == 0 then 
+        return  -- ❌ Ignore if it's not a player
     end
 
     -- ✅ Trigger the callback function if it exists

@@ -148,7 +148,7 @@ function GameController:ctor()
 
     -- ✅ Spawn hearts at each position
     for _, tilePos in ipairs(heartPositions) do
-        local heart = Heart.new("res/Sprites/Powerup/heart.png")  -- ✅ Create heart object
+        local heart = Heart:create("res/Sprites/Powerup/heart.png")  -- ✅ Create heart object
         heart:setPosition(map:tileToWorldCoord(tilePos))  -- ✅ Convert tile position to world position
         self:addChild(heart)  -- ✅ Add to the scene
     end
@@ -157,10 +157,10 @@ function GameController:ctor()
     -- PowerUp
 
     -- ✅ Create a game object with a sprite and counter
-    local coinDisplay = SpriteGameObject.new("res/Sprites/Powerup/coin.png", 5)
+    local coinDisplay = SpriteGameObject:create("res/Sprites/Powerup/coin.png", 5)
 
     -- ✅ Attach the position-locking component
-    local stayComponent = StayAtPosition.new(coinDisplay, cc.p(300, 500))
+    local stayComponent = StayAtPosition:create(coinDisplay, cc.p(300, 500))
     coinDisplay:addComponent(stayComponent)
 
     -- ✅ Add to scene
