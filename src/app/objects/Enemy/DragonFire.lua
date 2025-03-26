@@ -3,7 +3,7 @@ local CollisionLayers = require("app.core.CollisionLayers")
 
 local DragonFire = class("DragonFire", GameObject)
 
-function DragonFire:ctor(position, direction, speed, lifetime, spritePath)
+function DragonFire:ctor(direction, speed, lifetime)
     GameObject.ctor(self)
 
     self.speed = speed or 500  -- ✅ Default speed

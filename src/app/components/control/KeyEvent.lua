@@ -20,8 +20,8 @@ function KeyEvent:ctor(owner, keyToWatch, onPress, onRelease)
 end
 
 function KeyEvent:update(dt)
-    local velocity = self.owner:getPhysicsBody():getVelocity()
-    print("Current Velocity:", velocity.x, velocity.y)
+    -- local velocity = self.owner:getPhysicsBody():getVelocity()
+    -- print("Current Velocity:", velocity.x, velocity.y)
 end
 
 function KeyEvent:onKeyPressed(keyCode, event)

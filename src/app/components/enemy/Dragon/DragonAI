@@ -1,0 +1,48 @@
+local Component = require("app.core.Component")
+local CollisionLayers = require("app.core.CollisionLayers")
+local bit = require("bit")
+
+local DragonAI = class("DragonAI", Component)
+
+function DragonAI:ctor(owner, target)
+    Component.ctor(self, owner)
+    self.target = target
+    
+    self.coreStat = self.owner:getComponent("CoreStat")
+    self.animComponent = self.owner:getComponent("AnimationComponent")
+end
+
+function DragonAI:update(dt)
+    -- print("DragonAI Update")
+    if not self.isEnabled then return end
+
+    if (self.coreStat.isDead) then
+        return  -- ✅ Ignore update if dead
+    end
+
+    local targetPos = cc.p(self.target:getPosition())
+    local selfPos = cc.p(self.owner:getPosition())
+
+    -- print("Self Position:", selfPos.x, selfPos.y)
+
+
+    local dx = targetPos.x - selfPos.x
+    local dy = targetPos.y - selfPos.y
+    local distance = math.sqrt(dx * dx + dy * dy)
+
+    -- print("Distance to target:", distance)
+
+    if distance < 700 and not self.isAttacking then
+        self.animComponent:play("dragon_attack")  -- ✅ Play attack animation if within range
+    end
+
+    if distance >= 700 then
+        self.animComponent:play("dragon_recover")  
+    end
+
+    if self.isAttacking then
+        self.owner:Attack()  -- ✅ Call attack function while attacking
+    end
+end
+
+return DragonAI

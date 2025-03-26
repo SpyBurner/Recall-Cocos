@@ -15,6 +15,9 @@ local Box32 = require("app.objects.BoxCollection.Box32")  -- Import the BoxObjec
 
 
 local Blob = require("app.objects.Enemy.Blob")
+local Dragon = require("app.objects.Enemy.Dragon")
+local FireOrigin = require("app.objects.Enemy.FireOrigin")  -- Import the FireOrigin class
+
 
 local Heart = require("app.objects.PowerUp.Heart")  -- Import the Heart class
 local Spring = require("app.objects.PowerUp.Spring")  -- Import the Spring class
@@ -38,7 +41,11 @@ function GameController:ctor()
     -- PLAYER
     local player = ControllableObject:create(3, 1, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
 
-    player:setPosition(map:tileToWorldCoord(cc.p(12, 41)))
+    local cameraFollow = CameraFollow:create(player, nil, 100)  -- Follow with 100px deadzone
+    player:addComponent(cameraFollow)
+
+    -- player:setPosition(map:tileToWorldCoord(cc.p(12, 41)))
+    player:setPosition(map:tileToWorldCoord(cc.p(87, 34)))
     player:setLocalZOrder(10)  -- ✅ Ensure player is on top of the map
     
     local defaultBounciness = 0  -- ✅ Normal restitution
@@ -71,10 +78,10 @@ function GameController:ctor()
     threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(22, 41)))
     self:addChild(threeByThree_temp)
 
-    local springtest = Spring:create("res/Sprites/Powerup/spring.png")  -- ✅ Create spring object
-    springtest:setPosition(map:tileToWorldCoord(cc.p(15, 41)))  -- ✅ Set position
+    -- local springtest = Spring:create("res/Sprites/Powerup/spring.png")  -- ✅ Create spring object
+    -- springtest:setPosition(map:tileToWorldCoord(cc.p(15, 41)))  -- ✅ Set position
 
-    self:addChild(springtest)  -- ✅ Add to the scene
+    -- self:addChild(springtest)  -- ✅ Add to the scene
 
     -- Animation
     local animations = {
@@ -97,8 +104,8 @@ function GameController:ctor()
     -- PLAYER
 
     -- ✅ Attach CameraFollow component
-    local cameraFollow = CameraFollow:create(player, nil, 100)  -- Follow with 100px deadzone
-    player:addComponent(cameraFollow)
+    -- local cameraFollow = CameraFollow:create(player, nil, 100)  -- Follow with 100px deadzone
+    -- player:addComponent(cameraFollow)
     
     self:addChild(player)
 
@@ -164,6 +171,18 @@ function GameController:ctor()
     local blob7 = Blob:create(player)  -- Pass the player as the target
     blob7:setPosition(map:tileToWorldCoord(cc.p(11, 29)))
     self:addChild(blob7)
+
+    local dragon = Dragon:create(4, player)  -- Pass the player as the target
+    dragon:setPosition(map:tileToWorldCoord(cc.p(123,33)))
+    local fireOrigin = FireOrigin:create()  -- Create the fire origin
+    fireOrigin:setPosition(map:tileToWorldCoord(cc.p(120,41)))
+
+    dragon.OnAttack:AddListener(function()
+        fireOrigin:Trigger()
+    end)
+
+    self:addChild(dragon)
+    self:addChild(fireOrigin)  -- Add the fire origin to the scene
     -- Enemy
 
     -- PowerUp
@@ -233,8 +252,9 @@ function GameController:ctor()
     local coinDisplay = SpriteGameObject:create("res/Sprites/Powerup/coin.png", 0)
 
     -- ✅ Attach the position-locking component
-    local stayComponent = StayAtPosition:create(coinDisplay, cc.p(300, 500))
+    local stayComponent = StayAtPosition:create(coinDisplay, cc.p(460, 500))
     coinDisplay:addComponent(stayComponent)
+    coinDisplay:setLocalZOrder(100)
 
     -- ✅ Add to scene
     self:addChild(coinDisplay)
@@ -248,8 +268,9 @@ function GameController:ctor()
     local heartDisplay = SpriteGameObject:create("res/Sprites/Powerup/heart.png", 3)
 
     -- ✅ Attach the position-locking component
-    local heartStayComponent = StayAtPosition:create(heartDisplay, cc.p(100, 500))
+    local heartStayComponent = StayAtPosition:create(heartDisplay, cc.p(-500, 500))
     heartDisplay:addComponent(heartStayComponent)
+    heartDisplay:setLocalZOrder(100)
 
     -- ✅ Add to scene
     self:addChild(heartDisplay)

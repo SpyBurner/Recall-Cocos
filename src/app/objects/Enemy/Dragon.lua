@@ -4,20 +4,28 @@ local DamageOnContact = require("app.components.stat.DamageOnContact")
 local CallBackOnContact = require("app.components.stat.CallBackOnContact")
 local CollisionLayers = require("app.core.CollisionLayers")
 local bit = require("bit")
+local CoreStat = require("app.components.stat.CoreStat")
+
+local Event = require("app.core.Event")
 
 local DragonFire = require("app.objects.Enemy.DragonFire")
+local DragonAI = require("app.components.enemy.Dragon.DragonAI")
 
 local Dragon = class("Dragon", GameObject)
 
-function Dragon:ctor(spritePath, scale, target)
+function Dragon:ctor(scale, target)
     GameObject.ctor(self)
 
-    self.scale = scale or 5  -- ✅ Default scale
-    self.setLocalZOrder(5)
+    self.scale = scale or 1  -- ✅ Default scale
+    self:setLocalZOrder(5)
+
+    self.target = target  -- ✅ Target to follow (e.g., player)
+
+    local spriteSize = cc.p(130, 130)
 
     -- ✅ Create physics body (apply scale)
-    local physicsBody = cc.PhysicsBody:createBox(cc.size(spriteSize.width * self.scale, spriteSize.height * self.scale))
-    physicsBody:setDynamic(true)  -- ✅ Allow movement
+    local physicsBody = cc.PhysicsBody:createBox(cc.size(spriteSize.x * self.scale, spriteSize.y * self.scale))
+    physicsBody:setDynamic(false)  -- ✅ Allow movement
     physicsBody:setGravityEnable(false)  -- ✅ Not affected by gravity
 
     -- ✅ Collision settings
@@ -36,7 +44,7 @@ function Dragon:ctor(spritePath, scale, target)
                 self.isAttacking = true  -- ✅ Set attacking flag
             end },
 
-        { name = "dragon_recover", plist = "res/Sprites/Enemy/Dragon/dragon_recover.plist", frameTime = 0.5, loop = false, callback = function)()
+        { name = "dragon_recover", plist = "res/Sprites/Enemy/Dragon/dragon_recover.plist", frameTime = 0.5, loop = false, callback = function()
             self.isAttacking = false
         end},
         { name = "dragon_death", plist = "res/Sprites/Enemy/Dragon/dragon_death.plist", frameTime = 2, loop = false, callback = function()
@@ -45,43 +53,27 @@ function Dragon:ctor(spritePath, scale, target)
         end },
     }
 
-    self.animComponent = AnimationComponent:create(self, animations, 5)
+    self.animComponent = AnimationComponent:create(self, animations, self.scale)
     self:addComponent(self.animComponent)
-    animComponent:play("dragon_recover")  -- ✅ Play flying animation by default
+    self.animComponent:play("dragon_recover")  -- ✅ Play flying animation by default
 
-    -- ✅ Damage on contact
-    local damageOnContact = DamageOnContact:create(self, 2)  -- ✅ Add damage component
-    self:addComponent(damageOnContact)
+    -- -- ✅ Damage on contact
+    -- local damageOnContact = DamageOnContact:create(self, 2)  -- ✅ Add damage component
+    -- self:addComponent(damageOnContact)
 
     self.coreStat = CoreStat:create(self, 100, 0)  -- ✅ Add core stat component
     self:addComponent(self.coreStat)
 
-    self.coreStat.OnDeathEvent:subscribe(function()
-        animComponent:play("dragon_death")  -- ✅ Play death animation
+    self.coreStat.OnDeathEvent:AddListener(function()
+        self.animComponent:play("dragon_death")  -- ✅ Play death animation
     end)
-end
 
-function Dragon:update(dt)
-    if (self.coreStat.isDead) then
-        return  -- ✅ Ignore update if dead
-    end
+    self.OnAttack = Event:create()
 
-    local targetPos = cc.p(target:getPosition())
-    local selfPos = cc.p(self:getPosition())
+    self.dragonAI = DragonAI:create(self, target)  -- ✅ Create AI component
+    self:addComponent(self.dragonAI)
 
-    local distance = cc.pGetDistance(selfPos, targetPos)
-
-    if distance < 700 and not self.isAttacking then
-        self.animComponent:play("dragon_attack")  -- ✅ Play attack animation if within range
-    end
-
-    if distance >= 700
-        self.animComponent:play("dragon_recover")  
-    end
-
-    while self.isAttacking then
-        self::Attack()  -- ✅ Call attack function while attacking
-    end
+    print("Dragon created!")
 end
 
 -- Hard code cooldown
@@ -90,12 +82,13 @@ local lastAttackTime = 0
 
 function Dragon:Attack()
     if os.time() - lastAttackTime < cooldown then
+        print("❌ Attack on cooldown!")
         return  -- ✅ Ignore attack if within cooldown
     end
 
+    print("Dragon attacks!")
     lastAttackTime = os.time()  -- ✅ Update last attack time
-
-    local dragonFire = DragonFire:create("res/Sprites/Enemy/Dragon/dragon_fire.plist", 5, self)  -- ✅ Create fireball
+    self.OnAttack:Invoke()
 end
 
 return Dragon
