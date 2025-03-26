@@ -99,7 +99,13 @@ function BlobAI:update(dt)
     -- ✅ Move Up if Target is Higher
     if self.target then
         local targetPos = cc.p(self.target:getPosition())
-        self.direction.y = (targetPos.y > position.y + 100) and 1 or 0
+
+        local targetDistance = cc.pGetDistance(position, targetPos)
+
+        if targetDistance < 100 then
+            self.direction.y = (targetPos.y > position.y + 100) and 1 or 0
+        end
+
     end
 
     -- ✅ Apply Direction to Joystick

@@ -32,13 +32,9 @@ function GameController:ctor()
     player:setPosition(map:tileToWorldCoord(cc.p(12,41)))
     player:setLocalZOrder(10)  -- ✅ Set Z-order to ensure player is on top of the map
 
-    local threeByThree_temp = Box28:create()
+    local threeByThree_temp = Box8:create()
     threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(22, 41)))
     self:addChild(threeByThree_temp)
-
-    local bigBox_temp = Box32:create()
-    bigBox_temp:setPosition(map:tileToWorldCoord(cc.p(32, 41)))
-    self:addChild(bigBox_temp)
 
     -- Animation
     local animations = {
@@ -119,10 +115,33 @@ function GameController:ctor()
 
 
     -- Enemy
-    -- local blob1 = Blob:create(player)  -- Pass the player as the target
-    -- blob1:setPosition(cc.p(350, display.cy + 200))
+    local blob1 = Blob:create(player)  -- Pass the player as the target
+    blob1:setPosition(map:tileToWorldCoord(cc.p(74, 42)))
+    self:addChild(blob1)
 
-    -- self:addChild(blob1)
+    local blob2 = Blob:create(player)  -- Pass the player as the target
+    blob2:setPosition(map:tileToWorldCoord(cc.p(77, 36)))
+    self:addChild(blob2)
+
+    local blob3 = Blob:create(player)  -- Pass the player as the target
+    blob3:setPosition(map:tileToWorldCoord(cc.p(73, 32)))
+    self:addChild(blob3)
+
+    local blob4 = Blob:create(player)  -- Pass the player as the target
+    blob4:setPosition(map:tileToWorldCoord(cc.p(61, 42)))
+    self:addChild(blob4)
+
+    local blob5 = Blob:create(player)  -- Pass the player as the target
+    blob5:setPosition(map:tileToWorldCoord(cc.p(64, 42)))
+    self:addChild(blob5)
+
+    local blob6 = Blob:create(player)  -- Pass the player as the target
+    blob6:setPosition(map:tileToWorldCoord(cc.p(38, 42)))
+    self:addChild(blob6)
+
+    local blob7 = Blob:create(player)  -- Pass the player as the target
+    blob7:setPosition(map:tileToWorldCoord(cc.p(11, 29)))
+    self:addChild(blob7)
     -- Enemy
 
 

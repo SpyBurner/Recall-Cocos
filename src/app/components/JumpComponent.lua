@@ -6,6 +6,12 @@ local CollisionLayers = require("app.core.CollisionLayers")
 
 local JumpComponent = class("JumpComponent", Component)
 
+
+-- Hard code jump delay
+
+local jumpDelay = 0.2  -- ✅ Delay in seconds before the next jump can be initiated
+local lastJumpTime = 0  -- ✅ Last jump time
+
 function JumpComponent:ctor(owner, jumpStrength, rayCastHeight)
     Component.ctor(self, owner)
     self.jumpStrength = jumpStrength
@@ -31,7 +37,7 @@ function JumpComponent:update(dt)
     -- Jump if pressing up
     if self.joystick then
         local direction = self.joystick:getDirection()
-        if direction.y == 1 then
+        if direction.y == 1 and os.time() - lastJumpTime > jumpDelay   then
             self:jump()
         end
     end
