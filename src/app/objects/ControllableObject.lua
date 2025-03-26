@@ -25,7 +25,7 @@ function ControllableObject:ctor(maxHP, iframe, width, height, scale, speed, jum
 
     self.name = name or "ControllableObject"  -- ✅ Default name
 
-    self.physicsBody = cc.PhysicsBody:createBox(cc.size(self.width - 10, self.height), self.physicMaterial)
+    self.physicsBody = cc.PhysicsBody:createBox(cc.size(self.width - 10, self.height - 5), self.physicMaterial)
     self.physicsBody:setDynamic(true)
     self.physicsBody:setRotationEnable(false)
     

@@ -29,15 +29,15 @@ function GameController:ctor()
     -- PLAYER
     local player = ControllableObject:create(3, 0.5, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
     
-    player:setPosition(map:tileToWorldCoord(cc.p(12,31)))
+    player:setPosition(map:tileToWorldCoord(cc.p(12,41)))
     player:setLocalZOrder(10)  -- ✅ Set Z-order to ensure player is on top of the map
 
     local threeByThree_temp = Box28:create()
-    threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(22, 31)))
+    threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(22, 41)))
     self:addChild(threeByThree_temp)
 
     local bigBox_temp = Box32:create()
-    bigBox_temp:setPosition(map:tileToWorldCoord(cc.p(32, 31)))
+    bigBox_temp:setPosition(map:tileToWorldCoord(cc.p(32, 41)))
     self:addChild(bigBox_temp)
 
     -- Animation
@@ -86,31 +86,31 @@ function GameController:ctor()
 
     -- Physic object
     local oneByOne = Box8:create()
-    oneByOne:setPosition(map:tileToWorldCoord(cc.p(10, 13)))
+    oneByOne:setPosition(map:tileToWorldCoord(cc.p(11,10 + 13)))
     self:addChild(oneByOne)
 
     local oneByOne1 = Box8:create()
-    oneByOne1:setPosition(map:tileToWorldCoord(cc.p(13, 13)))
+    oneByOne1:setPosition(map:tileToWorldCoord(cc.p(14,10 + 13)))
     self:addChild(oneByOne1)
 
     local twoByTwo = Box16:create()
-    twoByTwo:setPosition(map:tileToWorldCoord(cc.p(18, 20)))
+    twoByTwo:setPosition(map:tileToWorldCoord(cc.p(18,10 + 20)))
     self:addChild(twoByTwo)
 
     local twoByTwo2 = Box16:create()
-    twoByTwo2:setPosition(map:tileToWorldCoord(cc.p(67, 18)))
+    twoByTwo2:setPosition(map:tileToWorldCoord(cc.p(67,10 + 18)))
     self:addChild(twoByTwo2)
 
     local twoByTwo3 = Box16:create()
-    twoByTwo3:setPosition(map:tileToWorldCoord(cc.p(78, 12)))
+    twoByTwo3:setPosition(map:tileToWorldCoord(cc.p(78,10 + 12)))
     self:addChild(twoByTwo3)
 
     local twoByTwo4 = Box16:create()
-    twoByTwo4:setPosition(map:tileToWorldCoord(cc.p(82, 25)))
+    twoByTwo4:setPosition(map:tileToWorldCoord(cc.p(83, 35)))
     self:addChild(twoByTwo4)
 
     local threeByThree = Box28:create()
-    threeByThree:setPosition(map:tileToWorldCoord(cc.p(39, 16)))
+    threeByThree:setPosition(map:tileToWorldCoord(cc.p(39,10 + 16)))
     self:addChild(threeByThree)
 
     local bigBox = Box32:create()
