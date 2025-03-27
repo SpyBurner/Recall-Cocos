@@ -59,7 +59,7 @@ function GameController:ctor()
     
     local springAbility = KeyEvent:create(player, cc.KeyCode.KEY_S,
         function()  -- ✅ On Pressed
-            local body = player:getPhysicsBody():getFirstShape()
+            local body = player:getPhysicsBody():getShape()
             if body then
                 print("🔼 Increasing Bounciness!")
                 body:setRestitution(boostedBounciness)  -- ✅ Set high bounce
@@ -68,7 +68,7 @@ function GameController:ctor()
             end
         end,
         function()  -- ✅ On Released
-            local body = player:getPhysicsBody():getFirstShape()
+            local body = player:getPhysicsBody():getShape()
             if body then
                 print("🔽 Resetting Bounciness!")
                 body:setRestitution(defaultBounciness)  -- ✅ Reset to normal bounce
