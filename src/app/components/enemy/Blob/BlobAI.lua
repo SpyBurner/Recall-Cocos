@@ -100,10 +100,12 @@ function BlobAI:update(dt)
     if self.target then
         local targetPos = cc.p(self.target:getPosition())
 
-        local targetDistance = cc.pGetDistance(position, targetPos)
+        local dx = targetPos.x - position.x
+        local dy = targetPos.y - position.y
+        local targetDistance = math.sqrt(dx * dx + dy * dy)
 
-        if targetDistance < 100 then
-            self.direction.y = (targetPos.y > position.y + 100) and 1 or 0
+        if targetDistance < 50 then
+            self.direction.y = (targetPos.y > position.y + 50) and 1 or 0
         end
 
     end

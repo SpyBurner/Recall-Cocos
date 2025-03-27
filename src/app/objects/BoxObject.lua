@@ -24,10 +24,10 @@ function BoxObject:ctor(size, density, restitution, friction, spritePath)
     -- ✅ Set fixed collision layers
     physicsBody:setCategoryBitmask(CollisionLayers.PUSHABLE)  -- Box belongs to PUSHABLE layer
     physicsBody:setCollisionBitmask(
-        CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.ENEMY, CollisionLayers.WALL)
+        CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.ENEMY, CollisionLayers.WALL, CollisionLayers.PUSHABLE)
     )  -- Box reacts to collisions with these layers
     physicsBody:setContactTestBitmask(
-        CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.ENEMY, CollisionLayers.WALL, CollisionLayers.PUSHABLE)
+        CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.ENEMY, CollisionLayers.WALL)
     )  -- Box collides with Player, Enemy, and Wall
 
     self:setPhysicsBody(physicsBody)

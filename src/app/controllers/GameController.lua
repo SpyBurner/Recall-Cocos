@@ -39,14 +39,20 @@ function GameController:ctor()
     map:addComponent(reload)  -- Add the reload component to the map
 
     -- PLAYER
-    local player = ControllableObject:create(3, 1, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
+    local player = ControllableObject:create(3, 1.5, 8, 8, 5, 150, 500, true, "Player")  -- ✅ Player-controlled
+    player:setPosition(map:tileToWorldCoord(cc.p(12, 41)))
+    
+    -- Second area location
+    -- player:setPosition(map:tileToWorldCoord(cc.p(87, 34)))
+
+    -- Goal location
+    player:setPosition(map:tileToWorldCoord(cc.p(133, 38)))
+    
+    player:setLocalZOrder(10)  -- ✅ Ensure player is on top of the map
 
     local cameraFollow = CameraFollow:create(player, nil, 100)  -- Follow with 100px deadzone
     player:addComponent(cameraFollow)
 
-    -- player:setPosition(map:tileToWorldCoord(cc.p(12, 41)))
-    player:setPosition(map:tileToWorldCoord(cc.p(87, 34)))
-    player:setLocalZOrder(10)  -- ✅ Ensure player is on top of the map
     
     local defaultBounciness = 0  -- ✅ Normal restitution
     local boostedBounciness = 2.3  -- ✅ Boosted bounciness
@@ -74,9 +80,9 @@ function GameController:ctor()
     player:addComponent(springAbility)
     
 
-    local threeByThree_temp = Box16:create()
-    threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(87, 29)))
-    self:addChild(threeByThree_temp)
+    -- local threeByThree_temp = Box16:create()
+    -- threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(87, 29)))
+    -- self:addChild(threeByThree_temp)
 
     -- local springtest = Spring:create("res/Sprites/Powerup/spring.png")  -- ✅ Create spring object
     -- springtest:setPosition(map:tileToWorldCoord(cc.p(15, 41)))  -- ✅ Set position

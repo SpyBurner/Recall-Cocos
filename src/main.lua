@@ -17,7 +17,7 @@ local function main()
     local glview = cc.Director:getInstance():getOpenGLView()
     -- glview:setFrameSize(1920, 1030)
     glview:setFrameSize(1280, 720)
-    -- glview:setFullScreenEnabled(true)
+    -- glview:setFullScreen(true)
     
     require("app.MyApp"):create():run()
 end

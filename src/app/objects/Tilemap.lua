@@ -2,7 +2,7 @@ local GameObject = require("app.core.GameObject")
 local CollisionLayers = require("app.core.CollisionLayers")
 local DamageOnContact = require("app.components.stat.DamageOnContact")
 local BaseObject = require("app.objects.BaseObject")
-
+local CallbackOnContact = require("app.components.stat.CallbackOnContact")
 
 local Tilemap = class("Tilemap", GameObject)
 
@@ -34,6 +34,8 @@ function Tilemap:ctor(mapFile, scale)
 
     --! HARD CODE DAMAGE
     self:setupDamageLayer("Damage", 1) 
+
+    self:setupGoalLayer("Goal")  -- ✅ Setup goal layer (if applicable)
 end
 
 function Tilemap:setupCollisionLayer(layerName)
@@ -164,6 +166,53 @@ function Tilemap:setupDamageLayer(layerName, damage)
         end
     end
 end
+
+function Tilemap:setupGoalLayer(layerName)
+    print("Creating goal layer")
+    local goalLayer = self.tilemap:getLayer(layerName)
+    if not goalLayer then
+        print("❌ No goal layer found")
+        return
+    end  -- ✅ Exit if no goal layer
+
+    local mapWidth = self.mapSize.width
+    local mapHeight = self.mapSize.height
+    local tileSize = self.tileSize
+    tileSize = cc.size(tileSize.width * self.scale, tileSize.height * self.scale)
+
+    for x = 0, mapWidth - 1 do
+        for y = 0, mapHeight - 1 do
+            local tile = goalLayer:getTileAt(cc.p(x, y))
+            if tile then
+                -- ✅ Create a physics body for the goal tile
+                local body = cc.PhysicsBody:createBox(tileSize)
+                body:setDynamic(false)  -- ✅ Static body (doesn't move)
+                body:setCategoryBitmask(CollisionLayers.POWERUP)
+                body:setCollisionBitmask(0)  -- ❌ No physical collision (pass-through)
+                body:setContactTestBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER))
+
+                local node = BaseObject:create()
+
+                -- ✅ Flip Y-coordinate for correct positioning
+                local flippedY = (mapHeight - y - 1) * tileSize.height
+
+                node:setPosition((x + 0.5) * tileSize.width, flippedY + (0.5 * tileSize.height))  -- ✅ Centered position
+                node:setPhysicsBody(body)
+
+                self:addChild(node)  -- ✅ Add to the tilemap node
+
+                local contactComponent = CallbackOnContact:create(node, function()
+                        local WinScene = require("app.scenes.WinScene")  -- Load menu scene
+                        local scene = WinScene:create()
+                        cc.Director:getInstance():replaceScene(scene)
+                end, nil, false)
+                self:addComponent(contactComponent)
+            end
+        end
+    end
+
+end
+
 -- ✅ Convert world position to tile coordinate (scaled)
 function Tilemap:worldToTileCoord(worldPos)
     local tileSize = self.tileSize
