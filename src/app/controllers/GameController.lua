@@ -117,11 +117,11 @@ function GameController:ctor()
 
     -- Physic object
     local oneByOne = Box8:create()
-    oneByOne:setPosition(map:tileToWorldCoord(cc.p(11,10 + 13)))
+    oneByOne:setPosition(map:tileToWorldCoord(cc.p(14,23)))
     self:addChild(oneByOne)
 
     local oneByOne1 = Box8:create()
-    oneByOne1:setPosition(map:tileToWorldCoord(cc.p(14,10 + 13)))
+    oneByOne1:setPosition(map:tileToWorldCoord(cc.p(10,22)))
     self:addChild(oneByOne1)
 
     local twoByTwo = Box16:create()
