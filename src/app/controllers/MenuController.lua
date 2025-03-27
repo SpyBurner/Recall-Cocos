@@ -12,6 +12,13 @@ function MenuController:onCreate()
         cc.Director:getInstance():replaceScene(scene)
     end)
 
+    self.aboutButton:registerScriptTapHandler(function()
+        print("About button clicked!")
+        local AboutScene = require("app.scenes.AboutScene")  -- Load about scene
+        local scene = AboutScene:create()
+        cc.Director:getInstance():replaceScene(scene)
+    end)
+
     self.settingsButton:registerScriptTapHandler(function()
         print("Settings button clicked!")
         local SettingsScene = require("app.scenes.SettingsScene")  -- Load settings scene
