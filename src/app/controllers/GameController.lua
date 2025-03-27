@@ -89,6 +89,10 @@ function GameController:ctor()
 
     -- self:addChild(springtest)  -- ✅ Add to the scene
 
+    -- local twoByTwoTest = Box16:create()
+    -- twoByTwoTest:setPosition(map:tileToWorldCoord(cc.p(18,41)))
+    -- self:addChild(twoByTwoTest)
+
     -- Animation
     local animations = {
         { name = "idle", plist = "res/Sprites/Player/idle/Idle.plist", frameTime = 0.2, loop = true },
