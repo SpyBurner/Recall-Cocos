@@ -44,7 +44,7 @@ function Coin:ctor(spritePath, scale, value)
         if coreStat then
             coreStat:AddCoins(self.value)  -- ✅ Add coin value to player's coins
             print("🪙 Coin: Player collected " .. self.value .. " coin(s)!")
-            self:removeFromParent(true)  -- ✅ Destroy coin after pickup
+            -- self:removeFromParent(true)  -- ✅ Destroy coin after pickup
         else
             print("❌ No CoreStat found on player!")
         end

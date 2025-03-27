@@ -27,11 +27,12 @@ function Dragon:ctor(scale, target)
     local physicsBody = cc.PhysicsBody:createBox(cc.size(spriteSize.x * self.scale, spriteSize.y * self.scale))
     physicsBody:setDynamic(false)  -- ✅ Allow movement
     physicsBody:setGravityEnable(false)  -- ✅ Not affected by gravity
+    physicsBody:setRotationEnable(false)  -- ✅ No rotation
 
     -- ✅ Collision settings
     physicsBody:setCategoryBitmask(CollisionLayers.ENEMY)  -- ✅ Dragon belongs to ENEMY layer
     physicsBody:setCollisionBitmask(CollisionLayers.WALL)  -- ✅ Can collide with walls
-    physicsBody:setContactTestBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER))  -- ✅ Detect collisions with player
+    physicsBody:setContactTestBitmask(CollisionLayers:collidesWith(CollisionLayers.PLAYER, CollisionLayers.PUSHABLE))  -- ✅ Detect collisions with player
 
     self:setPhysicsBody(physicsBody)
 
@@ -41,12 +42,15 @@ function Dragon:ctor(scale, target)
     local animations = {
         { name = "dragon_attack", plist = "res/Sprites/Enemy/Dragon/dragon_attack.plist", frameTime = 0.5, loop = false, 
             callback = function()
+                -- print("Attack animation callback")
                 self.isAttacking = true  -- ✅ Set attacking flag
             end },
 
-        { name = "dragon_recover", plist = "res/Sprites/Enemy/Dragon/dragon_recover.plist", frameTime = 0.5, loop = false, callback = function()
-            self.isAttacking = false
-        end},
+        { name = "dragon_recover", plist = "res/Sprites/Enemy/Dragon/dragon_recover.plist", frameTime = 0.5, loop = false, 
+            callback = function()
+                -- print("Recover animation callback")
+                self.isAttacking = false
+            end},
         { name = "dragon_death", plist = "res/Sprites/Enemy/Dragon/dragon_death.plist", frameTime = 2, loop = false, callback = function()
             print("Dragon dies!")
             self:runAction(cc.RemoveSelf:create())
@@ -73,21 +77,22 @@ function Dragon:ctor(scale, target)
     self.dragonAI = DragonAI:create(self, target)  -- ✅ Create AI component
     self:addComponent(self.dragonAI)
 
+    -- Hard code cooldown
+    self.cooldown = 0.08
+    self.cooldownTimer = 0
+
     print("Dragon created!")
 end
 
--- Hard code cooldown
-local cooldown = 0.3
-local lastAttackTime = 0
 
 function Dragon:Attack()
-    if os.time() - lastAttackTime < cooldown then
-        print("❌ Attack on cooldown!")
+    if self.cooldownTimer > 0 then
+        -- print("❌ Attack on cooldown!")
         return  -- ✅ Ignore attack if within cooldown
     end
 
-    print("Dragon attacks!")
-    lastAttackTime = os.time()  -- ✅ Update last attack time
+    -- print("Dragon attacks!")
+    self.cooldownTimer = self.cooldown  -- ✅ Reset cooldown timer
     self.OnAttack:Invoke()
 end
 

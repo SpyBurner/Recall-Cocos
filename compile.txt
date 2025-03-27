@@ -1,0 +1,2 @@
+cocos compile -s "c:\Users\ACER\Desktop\CocosProject\RecallPuzzle" -p win32 -m release -o  "c:\Users\ACER\Desktop\CocosProject\Build\RecallPuzzle"
+cocos run -s c:\Users\ACER\Desktop\CocosProject\RecallPuzzle -p win32

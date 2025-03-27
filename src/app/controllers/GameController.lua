@@ -74,8 +74,8 @@ function GameController:ctor()
     player:addComponent(springAbility)
     
 
-    local threeByThree_temp = Box8:create()
-    threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(22, 41)))
+    local threeByThree_temp = Box16:create()
+    threeByThree_temp:setPosition(map:tileToWorldCoord(cc.p(87, 29)))
     self:addChild(threeByThree_temp)
 
     -- local springtest = Spring:create("res/Sprites/Powerup/spring.png")  -- ✅ Create spring object
@@ -173,7 +173,7 @@ function GameController:ctor()
     self:addChild(blob7)
 
     local dragon = Dragon:create(4, player)  -- Pass the player as the target
-    dragon:setPosition(map:tileToWorldCoord(cc.p(123,33)))
+    dragon:setPosition(map:tileToWorldCoord(cc.p(123,43)))
     local fireOrigin = FireOrigin:create()  -- Create the fire origin
     fireOrigin:setPosition(map:tileToWorldCoord(cc.p(120,41)))
 

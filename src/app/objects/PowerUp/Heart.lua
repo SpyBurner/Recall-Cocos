@@ -42,7 +42,7 @@ function Heart:ctor(spritePath, scale)
         if coreStat then
             coreStat:Heal(1)  -- ✅ Heal the player by 1 HP
             print("❤️ Heart: Player healed!")
-            self:removeFromParent(true)  -- ✅ Destroy heart after pickup
+            -- self:removeFromParent(true)  -- ✅ Destroy heart after pickup
         else
             print("❌ No CoreStat found on player!")
         end

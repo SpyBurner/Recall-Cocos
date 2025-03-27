@@ -42,14 +42,14 @@ function DamageOnFall:handleContactBegin(contact)
     -- ✅ Filter to only damage ENEMY objects
     local category = other:getPhysicsBody():getCategoryBitmask()
     if bit.band(category, CollisionLayers.ENEMY) == 0 then 
-        return false  -- ❌ Ignore if it's not an enemy
+        return true  -- ❌ Ignore if it's not an enemy
     end
 
     -- ✅ Get the box's current falling speed
     local velocity = self.owner:getPhysicsBody():getVelocity()
     local fallSpeed = -velocity.y  -- Since downward velocity is negative in Cocos2d-x
 
-    print("📏 Fall Speed:", fallSpeed, "Threshold:", self.speedThreshold)
+    -- print("📏 Fall Speed:", fallSpeed, "Threshold:", self.speedThreshold)
 
     -- ✅ Check if fall speed is above the damage threshold
     if fallSpeed >= self.speedThreshold then
@@ -59,7 +59,7 @@ function DamageOnFall:handleContactBegin(contact)
             target:TakeDamage(self.damage)
         end
     else
-        print("❌ Fall speed too low, no damage applied.")
+        -- print("❌ Fall speed too low, no damage applied.")
     end
 
     return true

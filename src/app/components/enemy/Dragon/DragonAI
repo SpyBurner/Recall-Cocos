@@ -20,6 +20,8 @@ function DragonAI:update(dt)
         return  -- ✅ Ignore update if dead
     end
 
+    self.owner.cooldownTimer = self.owner.cooldownTimer - dt
+
     local targetPos = cc.p(self.target:getPosition())
     local selfPos = cc.p(self.owner:getPosition())
 
@@ -28,19 +30,27 @@ function DragonAI:update(dt)
 
     local dx = targetPos.x - selfPos.x
     local dy = targetPos.y - selfPos.y
-    local distance = math.sqrt(dx * dx + dy * dy)
+    -- local distance = math.sqrt(dx * dx + dy * dy)
+    local distanceX = math.abs(dx) 
+    local distanceY = math.abs(dy)
 
     -- print("Distance to target:", distance)
 
-    if distance < 700 and not self.isAttacking then
+    -- Hard core AI logic
+    local aggroRange = 1300  -- ✅ Set aggro range
+    local aggroRangeY = 600  -- ✅ Set aggro range Y
+
+    -- Attack when within range and target is below the dragon
+    if distanceX < aggroRange and not self.isAttacking and targetPos.y < selfPos.y + aggroRangeY then
         self.animComponent:play("dragon_attack")  -- ✅ Play attack animation if within range
     end
 
-    if distance >= 700 then
+    if distanceX >= aggroRange or targetPos.y > selfPos.y + aggroRangeY then
         self.animComponent:play("dragon_recover")  
     end
 
-    if self.isAttacking then
+    -- if self.isAttacking then
+    if self.owner.isAttacking then
         self.owner:Attack()  -- ✅ Call attack function while attacking
     end
 end

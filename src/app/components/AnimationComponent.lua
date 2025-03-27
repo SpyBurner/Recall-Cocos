@@ -9,9 +9,9 @@ function AnimationComponent:ctor(owner, animations, scale)
     self.sprite = cc.Sprite:create()
 
     if not self.sprite then
-        print("❌ Failed to create sprite!")
+        -- print("❌ Failed to create sprite!")
     else
-        print("✅ Sprite created successfully.")
+        -- print("✅ Sprite created successfully.")
     end
 
     self.scale = scale or 1
@@ -35,7 +35,7 @@ function AnimationComponent:loadAnimation(animData)
     local shouldLoop = animData.loop or false
     local callback = animData.callback
 
-    print("🔍 Loading animation:", name, "from:", plistFile)
+    -- print("🔍 Loading animation:", name, "from:", plistFile)
 
     -- ✅ Load the `.plist`
     local spriteFrameCache = cc.SpriteFrameCache:getInstance()
@@ -47,7 +47,7 @@ function AnimationComponent:loadAnimation(animData)
     local texture = cc.Director:getInstance():getTextureCache():addImage(textureFile)
 
     if not texture then
-        print("❌ Failed to load texture:", textureFile)
+        -- print("❌ Failed to load texture:", textureFile)?
         return
     end
 
@@ -55,7 +55,7 @@ function AnimationComponent:loadAnimation(animData)
 
     local frameNames = frameDict["frames"]  
     if not frameNames then
-        print("❌ No frames found in plist:", plistFile)
+        -- print("❌ No frames found in plist:", plistFile)
         return
     end
 
@@ -67,12 +67,12 @@ function AnimationComponent:loadAnimation(animData)
         local frame = spriteFrameCache:getSpriteFrame(frameName)
         if not frame then break end
         table.insert(frames, frame)
-        print("✅ Loaded frame:", frameName)
+        -- print("✅ Loaded frame:", frameName)
         index = index + 1
     end
 
     if #frames == 0 then
-        print("❌ No valid frames found for:", name)
+        -- print("❌ No valid frames found for:", name)
         return
     end
 
@@ -83,18 +83,18 @@ function AnimationComponent:loadAnimation(animData)
         shouldLoop = shouldLoop,
         callback = callback
     }
-    print("✅ Animation stored:", name)
+    -- print("✅ Animation stored:", name)
 end
 
 function AnimationComponent:play(name)
     local animData = self.animations[name]
     if not animData then
-        print("❌ Animation not found:", name)
+        -- print("❌ Animation not found:", name)
         return
     end
 
     if not animData.frames then
-        print("❌ Animation data is nil for:", name)
+        -- print("❌ Animation data is nil for:", name)
         return
     end
 

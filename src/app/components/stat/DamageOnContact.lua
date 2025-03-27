@@ -56,7 +56,7 @@ function DamageOnContact:handleContactBegin(contact)
         return true
     end
 
-    return false
+    return true
 end
 
 

@@ -4,12 +4,14 @@ local bit = require("bit")
 
 local CallBackOnContact = class("CallBackOnContact", Component)
 
-function CallBackOnContact:ctor(owner, onBegin, onEnd, destroyOnContact)
+function CallBackOnContact:ctor(owner, onBegin, onEnd, destroyOnContact, targetMask)
     Component.ctor(self, owner)
 
     self.onBegin = onBegin  -- ✅ Callback when contact starts
     self.onEnd = onEnd      -- ✅ Callback when contact ends
     self.destroyOnContact = destroyOnContact or false  -- ✅ Default: do not destroy
+
+    self.targetMask = targetMask or CollisionLayers.PLAYER  -- ✅ Default target mask (e.g., player)
 
     local physicsBody = self.owner:getPhysicsBody()
     if not physicsBody then
@@ -48,8 +50,8 @@ function CallBackOnContact:handleContactBegin(contact)
 
     -- ✅ Check if the other object is a player
     local category = other:getPhysicsBody():getCategoryBitmask()
-    if bit.band(category, CollisionLayers.PLAYER) == 0 then 
-        return false  -- ❌ Ignore if it's not a player
+    if bit.band(category, self.targetMask) == 0 then 
+        return true  -- ❌ Ignore if it's not the targetMask
     end
 
     -- ✅ Trigger the callback function if it exists
