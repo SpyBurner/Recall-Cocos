@@ -20,7 +20,8 @@ function MenuView:onCreate()
     self.exitButton:setColor(textColor)
 
     -- Arrange buttons
-    local menu = cc.Menu:create(self.playButton, self.settingsButton, self.aboutButton, self.exitButton)
+    -- local menu = cc.Menu:create(self.playButton, self.settingsButton, self.aboutButton, self.exitButton)
+    local menu = cc.Menu:create(self.playButton, self.aboutButton, self.exitButton)
     menu:alignItemsVerticallyWithPadding(20)
     menu:setPosition(display.cx, display.cy - 50)
     self:addChild(menu)

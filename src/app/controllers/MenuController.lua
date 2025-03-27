@@ -21,7 +21,7 @@ function MenuController:onCreate()
 
     self.settingsButton:registerScriptTapHandler(function()
         print("Settings button clicked!")
-        local SettingsScene = require("app.scenes.SettingsScene")  -- Load settings scene
+        local SettingsScene = require("app.scenes.SettingScene")  -- Load settings scene
         local scene = SettingsScene:create()
         cc.Director:getInstance():replaceScene(scene)
     end)

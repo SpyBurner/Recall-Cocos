@@ -46,7 +46,7 @@ function GameController:ctor()
     -- player:setPosition(map:tileToWorldCoord(cc.p(87, 34)))
 
     -- Goal location
-    player:setPosition(map:tileToWorldCoord(cc.p(133, 38)))
+    -- player:setPosition(map:tileToWorldCoord(cc.p(133, 38)))
     
     player:setLocalZOrder(10)  -- ✅ Ensure player is on top of the map
 
